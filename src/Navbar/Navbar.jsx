@@ -36,7 +36,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
               to={link.path}
               className={({ isActive }) =>
                 isActive
-                  ? `${navLinkClass} bg-purple-500 text-white`
+                  ? `${navLinkClass} bg-gradient-to-r  from-purple-500 to-indigo-500 text-white`
                   : `${navLinkClass} text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-gray-700`
               }
             >

@@ -17,7 +17,7 @@ Here is a preview:
 
 ## Tech Stack
 
-<li>Vite - fast dev environment</li>
-<li>React - component-based ui</li>
-<li>TailwindCSS - modern styling</li>
+-Vite - fast dev environment
+-React - component-based ui
+-TailwindCSS - modern styling
 

@@ -1,5 +1,8 @@
 # Streako
 
+Here is a preview:
+<img width="1378" height="889" alt="Image" src="https://github.com/user-attachments/assets/e02b7492-ac76-49d4-96b4-5892a2b3e3c2" />
+
 <h2>A Modern Habit tracker</h2>
 <p>Streako helsp you build better habits with streaks, progress tracking, and a clean modern ui</p>
 

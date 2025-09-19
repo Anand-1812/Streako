@@ -28,7 +28,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           Streako
         </h1>
 
-        {/* Desktop links + dark toggle */}
+        {/* links + dark mode */}
         <div className="hidden md:flex gap-4 items-center text-lg">
           {links.map((link) => (
             <NavLink
@@ -36,8 +36,8 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
               to={link.path}
               className={({ isActive }) =>
                 isActive
-                  ? `${navLinkClass} bg-blue-600 text-white`
-                  : `${navLinkClass} text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700`
+                  ? `${navLinkClass} bg-purple-500 text-white`
+                  : `${navLinkClass} text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-gray-700`
               }
             >
               {link.name}
@@ -47,7 +47,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           {/* Dark mode toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="cursor-pointer p-2 rounded-md text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors ease-in"
+            className="cursor-pointer p-2 rounded-md text-gray-800 dark:text-gray-100 hover:bg-purple-300 dark:hover:bg-gray-600 transition-colors ease-in"
           >
             {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>

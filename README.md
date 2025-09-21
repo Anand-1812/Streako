@@ -1,7 +1,13 @@
 # Streako
 
-<h2>A Modern Habit tracker</h2>
-<p>Streako helsp you build better habits with streaks, progress tracking, and a clean modern ui</p>
+## A Modern Habit tracker
+- Streako helsp you build better habits with streaks, progress tracking, and a clean modern ui
+
+# Here's a preview
+
+<img width="1883" height="918" alt="Image" src="https://github.com/user-attachments/assets/ca2c35af-b9d4-4ad4-b903-a0e42ab83a45" />
+<img width="1889" height="932" alt="Image" src="https://github.com/user-attachments/assets/07068047-e565-4c1e-a5b5-7cd0fb6540fb" />
+
 
 
 ## ✨ Features

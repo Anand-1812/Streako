@@ -38,7 +38,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
       className={`fixed top-0 w-full z-50 backdrop-blur-md transition-all duration-300 border-b
       ${
         scrolled
-          ? "bg-white/90 dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 shadow-md"
+          ? "dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 shadow-md"
           : "bg-transparent border-transparent"
       }`}
     >
@@ -46,7 +46,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
         {/* Brand */}
         <h1
           className="text-2xl md:text-4xl font-display tracking-wide text-gray-50 dark:text-gray-100
-            bg-clip-text dark:text-transparent bg-gradient-to-r dark:from-blue-500 dark:to-indigo-500
+            bg-clip-text bg-gradient-to-r dark:from-blue-500 dark:to-indigo-500
             transition-colors duration-300"
         >
           Streako

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import Navbar from "./Navbar/Navbar"
 import Home from "./Home/Home"
+import Footer from "./Footer/Footer";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -10,7 +11,9 @@ function App() {
       <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       <div className="flex-1">
         <Home />
+        <Footer />
       </div>
+
     </div>
   )
 }

@@ -53,7 +53,7 @@ function About() {
       <div className="relative z-10 text-center my-16">
         <NavLink
           to="/home"
-          className="px-12 py-5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-2xl shadow-lg hover:opacity-90 transition duration-300"
+          className="px-8 py-4 text-sm md:text-xl md:px-10 md:py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-2xl shadow-lg hover:opacity-90 transition duration-300"
         >
           Start Building Your Streak
         </NavLink>

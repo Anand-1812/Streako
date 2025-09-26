@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-6 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-50 via-transparent to-purple-50 dark:from-gray-800 dark:via-transparent dark:to-gray-900 pointer-events-none"></div>
@@ -20,7 +24,9 @@ function Home() {
             <button className="cursor-pointer px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
               Get Started
             </button>
-            <button className="px-8 py-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
+            <button
+              onClick={() => navigate("/about")}
+              className="px-8 py-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
               Learn More
             </button>
           </div>

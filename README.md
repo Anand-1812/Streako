@@ -9,9 +9,8 @@
 
 <details>
 <summary>Click to expand preview images</summary>
-
-<img width="1883" height="918" alt="Streako Preview 1" src="https://github.com/user-attachments/assets/ca2c35af-b9d4-4ad4-b903-a0e42ab83a45" />
-<img width="1889" height="932" alt="Streako Preview 2" src="https://github.com/user-attachments/assets/07068047-e565-4c1e-a5b5-7cd0fb6540fb" />
+<img width="1832" height="926" alt="Preview 1" src="https://github.com/user-attachments/assets/d1dc9b8f-f55a-4fd7-810d-ea1829b7b112" />
+<img width="1833" height="924" alt="Preview 2" src="https://github.com/user-attachments/assets/fd8e756f-4b17-4870-a514-bff48f073ffe" />
 
 </details>
 

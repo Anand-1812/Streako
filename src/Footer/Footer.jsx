@@ -12,7 +12,7 @@ function Footer() {
         {/* Social Icons */}
         <div className="flex items-center gap-4">
           <a
-            href="https://twitter.com/yourhandle"
+            href="https://twitter.com/anand_kumar1812"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 dark:text-gray-300

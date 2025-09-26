@@ -2,40 +2,39 @@ import { FaGithub, FaTwitter } from "react-icons/fa";
 
 function Footer() {
   return (
-    <footer className="fixed bottom-0 w-full dark:border-gray-900 dark:bg-gray-900 backdrop-blur-md transition-all duration-300">
+    <footer className="w-full dark:bg-gray-900 bg-white/90 dark:border-t dark:border-gray-700 backdrop-blur-md shadow-inner transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
-
-        <p className="text-sm md:text-base text-gray-400 dark:text-gray-300">
+        {/* Left: Copyright */}
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
           &#169; 2025 Anand Kumar
         </p>
 
-        {/* Social Icons */}
+        {/* Center: Social Icons */}
         <div className="flex items-center gap-4">
           <a
             href="https://twitter.com/anand_kumar1812"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 dark:text-gray-300
-            hover:text-blue-500 dark:hover:text-blue-400
-            transition-all duration-300 delay-150
-            transform hover:-translate-y-1 hover:scale-110"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300
+              hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white
+              transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-sm"
           >
-            <FaTwitter className="w-8 h-8" />
+            <FaTwitter className="w-5 h-5" />
           </a>
           <a
             href="https://github.com/anand-1812"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 dark:text-gray-300
-            hover:text-blue-500 dark:hover:text-blue-400
-            transition-all duration-300 delay-150
-            transform hover:-translate-y-1 hover:scale-110"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300
+              hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white
+              transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-sm"
           >
-            <FaGithub className="w-8 h-8" />
+            <FaGithub className="w-5 h-5" />
           </a>
         </div>
 
-        <p className="text-sm md:text-base text-gray-400 dark:text-gray-300">
+        {/* Right: Made by */}
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 text-center md:text-right">
           Made with ❤️ by <span className="font-semibold">Anand Kumar</span>
         </p>
       </div>

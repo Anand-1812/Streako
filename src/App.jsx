@@ -1,12 +1,11 @@
 import { useState } from "react"
 import Navbar from "./Navbar/Navbar"
-import Home from "./Home/Home"
 import Footer from "./Footer/Footer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const showFooter = location.pathname === "/home";
+  const showFooter = useLocation().pathname === "/home"
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">

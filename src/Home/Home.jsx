@@ -31,11 +31,8 @@ function Home() {
         </p>
 
         <div className="flex justify-center gap-4">
-          <button className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-xl shadow-lg hover:opacity-90 transition">
+          <button className="cursor-pointer px-10 py-5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold rounded-xl shadow-lg hover:opacity-90 transition">
             Get Started
-          </button>
-          <button className="px-8 py-3 border border-white/50 text-white font-semibold rounded-xl hover:bg-white/10 transition">
-            Learn More
           </button>
         </div>
       </div>

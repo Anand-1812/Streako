@@ -8,7 +8,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const [scrolled, setScrolled] = useState(false);
 
   const links = [
-    { name: "Home", path: "/" },
+    { name: "Home", path: "/home" },
     { name: "About", path: "/about" },
     { name: "Profile", path: "/profile" },
   ];

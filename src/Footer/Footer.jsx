@@ -2,7 +2,7 @@ import { FaGithub, FaTwitter } from "react-icons/fa";
 
 function Footer() {
   return (
-    <footer className="w-full dark:bg-gray-900 bg-white/90 dark:border-t dark:border-gray-700 backdrop-blur-md shadow-inner transition-all duration-300">
+    <footer className="w-full dark:bg-gray-900/100 bg-white/90  backdrop-blur-md shadow-inner transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
         {/* Left: Copyright */}
         <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">

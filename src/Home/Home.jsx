@@ -16,7 +16,7 @@ function Home() {
           <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8">
             Track your habits. Build consistency. Achieve your goals.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+          <div className="flex flex-col md:flex-row gap-4 justify-center md:justify-start">
             <button className="cursor-pointer px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
               Get Started
             </button>
@@ -28,7 +28,7 @@ function Home() {
 
         {/* Dashboard card */}
         <div className="flex-1 flex justify-center md:justify-end">
-          <div className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col gap-4 hover:shadow-2xl transition-shadow duration-300">
+          <div className="w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col gap-4 hover:shadow-2xl hover:scale-102 transition-transform transition-shadow duration-300">
             <h3 className="text-gray-900 dark:text-white font-semibold text-lg">
               Today's Streak
             </h3>

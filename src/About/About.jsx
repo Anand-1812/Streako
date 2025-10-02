@@ -23,7 +23,7 @@ function About() {
           Hi, I'm Anand Kumar
         </h1>
         <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed">
-          I build clean, modern, and trustworthy websites. My goal is to help people create better habits and improve their daily routines.
+          I build clean, modern, and trustworthy websites. The goal of this site is to help people create better habits and improve their daily routines.
         </p>
       </div>
 

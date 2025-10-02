@@ -23,7 +23,9 @@ function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
               Get Started
             </button>
             <button

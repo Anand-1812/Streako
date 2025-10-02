@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
 import Home from './Home/Home.jsx'
 import About from './About/About.jsx'
+import Dashboard from './Dashboard/Dashboard.jsx'
 
 const router = createBrowserRouter(
   [
@@ -14,7 +15,8 @@ const router = createBrowserRouter(
       children: [
         { index: true, element: <Navigate to="/home" replace /> },
         { path: 'home', element: <Home /> },
-        { path: 'about', element: <About /> }
+        { path: 'about', element: <About /> },
+        { path: 'dashboard', element: <Dashboard /> }
       ]
     }
   ],

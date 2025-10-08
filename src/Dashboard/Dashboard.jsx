@@ -1,5 +1,4 @@
-// src/dashboard/Dashboard.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar, Trophy, CheckCircle2 } from "lucide-react";
 import {
   LineChart,
@@ -13,9 +12,20 @@ import {
   Bar,
 } from "recharts";
 import FloatingDiv from "../FloatingDivs/FloatingDiv";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
-  // --- State ---
+  const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState(null);
+
+  useEffect(() => {
+    const signedUp = localStorage.getItem("hasSignedUp") === "true";
+    const email = localStorage.getItem("userEmail");
+
+    if (!signedUp) navigate("/signup");
+    else setUserEmail(email);
+  }, []);
+
   const [habits, setHabits] = useState([
     { id: 1, task: "Read 20 pages", done: true },
     { id: 2, task: "Code 4 hours", done: true },
@@ -51,14 +61,23 @@ function Dashboard() {
     completed: habit.done ? 1 : 0,
   }));
 
-  // --- Render ---
   return (
     <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-hidden">
-
       <FloatingDiv />
 
       <div className="relative z-10 w-full max-w-5xl flex flex-col gap-12">
-        {/* --- Metrics Cards --- */}
+
+        {/* Welcome Message */}
+        {userEmail && (
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Welcome back, <span className="text-blue-600 dark:text-blue-400">{userEmail}</span>!
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">Here's your habit dashboard:</p>
+          </div>
+        )}
+
+        {/* Metrics */}
         <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
           {mockMetrics.map((metric) => (
             <div
@@ -74,7 +93,7 @@ function Dashboard() {
           ))}
         </div>
 
-        {/* --- Graphs --- */}
+        {/* Graphs */}
         <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
           {/* Line Chart */}
           <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
@@ -105,7 +124,7 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* --- Habits Section --- */}
+        {/* Habits */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-transform duration-300 flex flex-col gap-6">
           <h3 className="text-gray-900 dark:text-white font-semibold text-xl">Today's Habits</h3>
           {habits.map((habit) => (

@@ -6,7 +6,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
         {/* Left: Copyright */}
         <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
-          &#169; 2025 Anand Kumar
+          &#169; 2025 Sreako
         </p>
 
         {/* Center: Social Icons */}
@@ -33,10 +33,6 @@ function Footer() {
           </a>
         </div>
 
-        {/* Right: Made by */}
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 text-center md:text-right">
-          Made with ❤️ by <span className="font-semibold">Anand Kumar</span>
-        </p>
       </div>
     </footer>
   );

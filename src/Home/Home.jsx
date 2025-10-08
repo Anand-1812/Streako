@@ -12,11 +12,11 @@ function Home() {
       <div className="absolute -top-20 -left-20 w-56 h-56 bg-blue-300 rounded-full opacity-20 animate-blob"></div>
       <div className="absolute -bottom-20 -right-28 w-64 h-64 bg-purple-400 rounded-full opacity-20 animate-blob animation-delay-2000"></div>
 
-      <div className="relative z-10 max-w-md w-full flex flex-col items-center gap-12">
+      <div className="relative z-10 max-w-7xl w-full flex flex-col items-center gap-12">
         {/* Tagline */}
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4 drop-shadow-lg leading-tight">
-            Don’t Just Plan, Build Habits 🚀
+          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 drop-shadow-lg leading-tight">
+            Don’t Just Plan, Build Habits
           </h1>
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
             Small steps. Daily progress. Lasting change.
@@ -37,7 +37,7 @@ function Home() {
         </div>
 
         {/* Dashboard card */}
-        <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col gap-6 hover:shadow-2xl hover:scale-[1.02] transition-transform duration-300">
+        <div className="w-full md:w-xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 flex flex-col gap-6 hover:shadow-2xl hover:scale-[1.02] transition-transform duration-300">
           <h3 className="text-gray-900 dark:text-white font-semibold text-lg">
             Today’s Progress
           </h3>

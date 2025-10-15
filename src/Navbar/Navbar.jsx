@@ -9,15 +9,6 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
-  // take the user to either signup or login
-  const handleProfileClick = () => {
-    const hasSignedup = localStorage.getItem("hasSignedup");
-
-    if (hasSignedup) {
-      navigate('/login')
-    } else navigate('/signup')
-
-  }
   const links = [
     { name: "Home", path: "/home" },
     { name: "About", path: "/about" },
@@ -30,7 +21,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   useEffect(() => {
     const root = window.document.documentElement;
     if (darkMode) root.classList.add("dark");
-      else root.classList.remove("dark");
+    else root.classList.remove("dark");
   }, [darkMode]);
 
   // Scroll effect
@@ -45,18 +36,17 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   return (
     <nav
       className={`fixed top-0 w-full z-50 backdrop-blur-md transition-all duration-300 border-b
-${
-scrolled
-? "bg-white/90 dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 shadow-md"
-: "bg-transparent border-transparent"
-}`}
+${scrolled
+          ? "bg-white/90 dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 shadow-md"
+          : "bg-transparent border-transparent"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
         {/* Brand */}
         <h1
           className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-wide
-          bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-500 cursor-pointer
-          transition-transform duration-300 transform hover:scale-105"
+        bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-500 cursor-pointer
+        transition-transform duration-300 transform hover:scale-105"
         >
           Streako
         </h1>
@@ -78,7 +68,6 @@ scrolled
           ))}
 
           <button
-            onClick={handleProfileClick}
             className={`${navLinkClass} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800`}
           >
             Profile
@@ -111,8 +100,8 @@ scrolled
             {menuOpen ? (
               <X className="w-7 h-7 text-gray-700 dark:text-gray-200" />
             ) : (
-                <Menu className="w-7 h-7 text-gray-700 dark:text-gray-200" />
-              )}
+              <Menu className="w-7 h-7 text-gray-700 dark:text-gray-200" />
+            )}
           </button>
         </div>
       </div>

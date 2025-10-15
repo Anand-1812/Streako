@@ -54,13 +54,8 @@ function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl shadow-md hover:opacity-90 transition-all duration-300">
+                className="px-8 py-4 md:text-2xl bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl shadow-md hover:opacity-90 transition-all duration-300">
                 Get Started
-              </button>
-              <button
-                onClick={() => navigate("/about")}
-                className="px-8 py-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl shadow-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
-                Learn More
               </button>
             </div>
           </div>
@@ -100,7 +95,7 @@ function Home() {
       </section>
 
       {/* About Section */}
-      <section className="relative w-full flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 overflow-hidden pt-24 md:pt-32">
+      <section className="relative w-full flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 overflow-hidden ">
         {/* Why Streako */}
         <div className="relative z-10 my-16 max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-4">

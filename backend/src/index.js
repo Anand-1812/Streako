@@ -1,27 +1,28 @@
-import mongoose, { mongo } from "mongoose";
 import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./db/index.js";
+import userRouter from "./routes/user.routes.js";
 
 // connection with the databse
 dotenv.config({
   path: "./.env",
 });
 
-// express
-const PORT = process.env.APP_PORT || 7123
+// initialize express
 const app = express();
 app.use(express.json());
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port: ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.log(`mongoDB connection error: ${err}`);
-    process.exit(1);
-  })
+// routes
+app.use('/user', userRouter);
+
+const PORT = process.env.APP_PORT || 7123
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port: ${PORT}`);
+  });
+}).catch((err) => {
+  console.error("Failed to connect to MongoDB:", err);
+});
 
 

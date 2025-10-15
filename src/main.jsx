@@ -5,9 +5,7 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
 import Home from './Home/Home.jsx'
 import About from './About/About.jsx'
-import Dashboard from './Dashboard/Dashboard.jsx'
-import Signup from './components/Auth/Signup.jsx'
-import Login from './components/Auth/Login.jsx'
+import Dashboard from "./components/Dashboard/Dashboard.jsx"
 
 const router = createBrowserRouter(
   [
@@ -19,8 +17,6 @@ const router = createBrowserRouter(
         { path: 'home', element: <Home /> },
         { path: 'about', element: <About /> },
         { path: 'dashboard', element: <Dashboard /> },
-        { path: 'signup', element: <Signup /> },
-        { path: 'login', element: <Login /> }
       ]
     }
   ]

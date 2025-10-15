@@ -10,23 +10,6 @@ function About() {
 
   return (
     <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 overflow-hidden pt-24 md:pt-32">
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-50 via-transparent to-purple-50 dark:from-gray-800 dark:via-transparent dark:to-gray-900 pointer-events-none"></div>
-
-      {/* Floating accent shapes */}
-      <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-300 rounded-full opacity-20 animate-blob"></div>
-      <div className="absolute -bottom-24 -right-32 w-72 h-72 bg-purple-400 rounded-full opacity-20 animate-blob animation-delay-2000"></div>
-
-      {/* Intro */}
-      <div className="relative z-10 max-w-4xl text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-          Hi, I'm Anand Kumar
-        </h1>
-        <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed">
-          I build clean, modern, and trustworthy websites. The goal of this site is to help people create better habits and improve their daily routines.
-        </p>
-      </div>
-
       {/* Why Streako */}
       <section className="relative z-10 my-16 max-w-3xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">

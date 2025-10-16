@@ -3,16 +3,10 @@ import { Menu, X, Sun, Moon } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import MobileMenu from "./MobileMenu";
 
-
 export default function Navbar({ menuOpen, setMenuOpen }) {
   const [darkMode, setDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-
-  const links = [
-    { name: "Home", path: "/home" },
-    { name: "About", path: "/about" },
-  ];
 
   const navLinkClass =
     "px-4 py-2 rounded-xl font-medium transition-all duration-300 ease-in-out transform hover:scale-105";
@@ -36,7 +30,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   return (
     <nav
       className={`fixed top-0 w-full z-50 backdrop-blur-md transition-all duration-300 border-b
-${scrolled
+        ${scrolled
           ? "bg-white/90 dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 shadow-md"
           : "bg-transparent border-transparent"
         }`}
@@ -51,26 +45,13 @@ ${scrolled
           Streako
         </h1>
 
-        {/* Desktop links + dark mode */}
+        { /* Get started */}
         <div className="hidden md:flex gap-6 items-center text-lg">
-          {links.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              className={({ isActive }) =>
-                isActive
-                  ? `${navLinkClass} bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md`
-                  : `${navLinkClass} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800`
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
-
           <button
-            className={`${navLinkClass} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800`}
-          >
-            Profile
+            onClick={() => navigate("/home/signup")}
+            className="cursor-pointer px-4 py-2 bg-black text-white dark:bg-white dark:text-black
+          rounded-xl font-semibold transition-colors duration-300">
+            Get Started
           </button>
 
           {/* Dark mode toggle */}

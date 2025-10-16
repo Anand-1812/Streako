@@ -2,7 +2,23 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-display: "Audiowide", sans-serif;
 }
 
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 1s ease-in-out infinite;
+}

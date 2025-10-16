@@ -8,11 +8,6 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
-  // const links = [
-  //   { name: "Home", path: "/home" },
-  //   { name: "About", path: "/about" },
-  // ];
-
   const navLinkClass =
     "px-4 py-2 rounded-xl font-medium transition-all duration-300 ease-in-out transform hover:scale-105";
 
@@ -52,7 +47,9 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
         { /* Get started */}
         <div className="hidden md:flex gap-6 items-center text-lg">
-          <button className="cursor-pointer px-4 py-2 bg-black text-white dark:bg-white dark:text-black
+          <button
+            onClick={() => navigate("/home/signup")}
+            className="cursor-pointer px-4 py-2 bg-black text-white dark:bg-white dark:text-black
           rounded-xl font-semibold transition-colors duration-300">
             Get Started
           </button>

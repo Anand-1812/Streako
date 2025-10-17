@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 function Signup() {
 
@@ -24,6 +25,8 @@ function Signup() {
     const data = await response.json();
     console.log(data);
   }
+
+  const notifySuccess = () => toast("Singup success");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -107,6 +110,7 @@ function Signup() {
 
           {/* Submit */}
           <button
+            onClick={notifySuccess}
             type="submit"
             className="w-full mt-4 rounded-2xl bg-black dark:bg-gray-900 text-white font-semibold py-3 shadow-lg hover:opacity-90 transition duration-300"
           >

@@ -1,4 +1,30 @@
+import { useState } from "react";
+
 function Signup() {
+
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    setUserData({ ...userData, [e.target.name]: e.target.value });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch("http://localhost:7000/home/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData)
+    })
+
+    const data = await response.json();
+    console.log(data);
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       {/* Overlay above everything, blocks background clicks */}
@@ -25,7 +51,9 @@ function Signup() {
         </div>
 
         {/* Right - Form */}
-        <form className="md:w-2/3 p-12 flex flex-col gap-6 bg-white dark:bg-gray-800">
+        <form
+          onSubmit={handleSubmit}
+          className="md:w-2/3 p-12 flex flex-col gap-6 bg-white dark:bg-gray-800">
           {/* Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -36,6 +64,8 @@ function Signup() {
               type="text"
               name="name"
               required
+              value={userData.name}
+              onChange={handleChange}
               placeholder="Your Name"
               className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
@@ -51,6 +81,8 @@ function Signup() {
               type="email"
               name="email"
               required
+              value={userData.email}
+              onChange={handleChange}
               placeholder="you@example.com"
               className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
@@ -66,6 +98,8 @@ function Signup() {
               type="password"
               name="password"
               required
+              value={userData.password}
+              onChange={handleChange}
               placeholder="Enter your password"
               className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />

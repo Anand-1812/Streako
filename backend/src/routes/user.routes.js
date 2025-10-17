@@ -2,7 +2,7 @@ import express from "express";
 import User from "../models/user.model.js";
 import { randomBytes, createHmac } from "crypto";
 
-const userRouter = express();
+const userRouter = express.Router();
 
 // signup route
 userRouter.post('/signup', async (req, res) => {
@@ -24,7 +24,7 @@ userRouter.post('/signup', async (req, res) => {
     .update(password)
     .digest('hex');
 
-  const user = await User.insertOne({
+  const user = await User.create({
     name,
     email,
     password: hashedPassword,
@@ -33,6 +33,20 @@ userRouter.post('/signup', async (req, res) => {
 
   return res.status(201)
     .json({ status: 'success', data: { id: user._id } });
+});
+
+userRouter.get("/users", async (req, res) => {
+  try {
+    const users = await User.findOne({});
+
+    res.status(200).json({
+      status: "success",
+      data: users,
+    });
+  } catch (error) {
+    console.error("Error fetching users: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 export default userRouter;

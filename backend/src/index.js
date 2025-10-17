@@ -1,3 +1,4 @@
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./db/index.js";
@@ -11,9 +12,13 @@ dotenv.config({
 // initialize express
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // routes
-app.use('/user', userRouter);
+app.get("/", (req, res) => {
+  res.send("backend is running")
+})
+app.use('/home', userRouter);
 
 const PORT = process.env.APP_PORT || 7123
 

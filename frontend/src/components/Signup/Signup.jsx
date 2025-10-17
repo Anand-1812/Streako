@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
 function Signup() {
@@ -8,6 +9,7 @@ function Signup() {
     email: "",
     password: ""
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
@@ -24,12 +26,19 @@ function Signup() {
 
     const data = await response.json();
     console.log(data);
-  }
 
-  const notifySuccess = () => toast("Singup success");
+    if (response.ok) {
+      toast.success("Singup successful");
+      setTimeout(() => navigate("/home/dashboard"), 1000);
+    } else {
+      toast.error("Signup failed");
+    }
+
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <Toaster position="top-center" />
       {/* Overlay above everything, blocks background clicks */}
 
       {/* Floating blobs */}
@@ -110,7 +119,6 @@ function Signup() {
 
           {/* Submit */}
           <button
-            onClick={notifySuccess}
             type="submit"
             className="w-full mt-4 rounded-2xl bg-black dark:bg-gray-900 text-white font-semibold py-3 shadow-lg hover:opacity-90 transition duration-300"
           >

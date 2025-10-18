@@ -29,7 +29,7 @@ function Signup() {
 
     if (response.ok) {
       toast.success("Singup successful");
-      setTimeout(() => navigate("/home/dashboard"), 1000);
+      setTimeout(() => navigate("/home/user"), 1000);
     } else {
       toast.error("Signup failed");
     }

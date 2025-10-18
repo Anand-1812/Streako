@@ -47,7 +47,7 @@ function Home() {
           </p>
 
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/home/signup")}
             className="px-10 py-4 bg-black dark:bg-white text-white dark:text-black text-lg font-semibold rounded-2xl shadow-md hover:scale-105 transition-transform"
           >
             Get Started
@@ -119,7 +119,7 @@ function Home() {
 
         <div className="text-center mt-16">
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/home/user")}
             className="px-10 py-4 bg-black dark:bg-gray-800 text-white text-lg font-semibold rounded-2xl shadow-md hover:opacity-90 transition"
           >
             Start Building Your Streak

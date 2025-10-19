@@ -1,63 +1,102 @@
 # Streako
 
-## A Modern Habit Tracker
-**Streako** helps you build better habits by tracking streaks, monitoring progress, and providing a clean, modern interface.
+**Not you usual habit tracker**
 
----
-
-## Preview
-
-<details>
-<summary>Click to expand preview images</summary>
-<img width="1832" height="926" alt="Preview 1" src="https://github.com/user-attachments/assets/d1dc9b8f-f55a-4fd7-810d-ea1829b7b112" />
-<img width="1833" height="924" alt="Preview 2" src="https://github.com/user-attachments/assets/fd8e756f-4b17-4870-a514-bff48f073ffe" />
-
-</details>
+Streako is a full-stack habit tracker designed to help users build and maintain daily routines. It features an intuitive interface, streak tracking, and personalized progress visualization.
 
 ---
 
 ## Features
 
-<details>
-<summary>Click to expand features</summary>
-
-- **To-Do List** – Organize daily tasks and habits efficiently.  
-- **Streak Tracker** – Visual streak tracker inspired by GitHub to keep you motivated.  
-- **Progress Tracking** – Monitor your growth over time with clear stats.  
-- **Modern UI** – Minimalistic and responsive design using Tailwind CSS.  
-- **Local Storage Support** – Habits remain saved even after refreshing the browser.
-
-</details>
+* **Streak Tracking:** Visualize consecutive days a habit has been maintained to boost motivation.
+* **Habit Management:** Organize and mark daily habits as complete through a simple interface.
+* **User Authentication:** Secure signup and protected dashboard access using JWT and cookie-based authentication.
+* **Dashboard Analytics:** Monitor progress over time with charts (powered by Recharts) showing weekly streaks and habit completion rates.
+* **Modern UI:** Minimalist, responsive design powered by Tailwind CSS for seamless use across devices.
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-<details>
-<summary>Click to expand tech stack</summary>
+### Frontend (`/frontend`)
 
-- **Vite** – Fast development environment.  
-- **React** – Component-based UI library.  
-- **TailwindCSS** – Modern utility-first styling framework.
+| Technology       | Purpose                                    |
+| ---------------- | ------------------------------------------ |
+| React            | Component-based library for UI development |
+| Vite             | Fast development server and bundler        |
+| Tailwind CSS     | Utility-first CSS framework for styling    |
+| Recharts         | Dynamic charts and graphs                  |
+| React Router DOM | Client-side navigation between views       |
 
-</details>
+### Backend (`/backend`)
+
+| Technology           | Purpose                                        |
+| -------------------- | ---------------------------------------------- |
+| Node.js / Express    | Web application runtime and framework          |
+| MongoDB / Mongoose   | Database and ODM                               |
+| jsonwebtoken (JWT)   | User session token generation and verification |
+| cors & cookie-parser | Handling cross-origin requests and cookies     |
 
 ---
 
-## Installation & Setup
+## 🚀 Installation & Setup
 
-<details>
-<summary>Click to expand setup instructions</summary>
+### Prerequisites
+
+* Node.js v16+
+* MongoDB running locally or via cloud service
+
+### 1. Clone Repository
 
 ```bash
-# Clone the repo
-git clone https://github.com/Anand-1812/Streako.git
-
-# Navigate into the project
+git clone <your-repo-link>
 cd Streako
+```
 
-# Install dependencies
+### 2. Backend Setup
+
+```bash
+cd backend
 npm install
+```
 
-# Start the development server
+Create a `.env` file in the `backend` folder:
+
+```env
+MONGO_URL="mongodb://127.0.0.1:27017/streako-db"
+JWT_SECRET="your_secure_jwt_secret_key"
+APP_PORT=7000
+```
+
+Start backend server:
+
+```bash
 npm run dev
+# Server running on http://localhost:7000
+```
+
+### 3. Frontend Setup
+
+```bash
+cd ../frontend
+npm install
+npm run dev
+# Frontend opens on http://localhost:5173
+```
+
+> Ensure the frontend (5173) and backend (7000) ports match your configuration for successful communication.
+
+---
+
+## 🎯 Usage
+
+1. Open the frontend in your browser.
+2. currentlt first Sign up, then log in to start tracking your habits.
+3. Add, complete, and monitor your habits on the dashboard.
+4. Check analytics to see your streaks and habit performance over time.
+
+---
+
+## License
+
+MIT License

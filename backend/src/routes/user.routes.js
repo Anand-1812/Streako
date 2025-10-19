@@ -35,16 +35,64 @@ userRouter.post('/signup', async (req, res) => {
 
   const token = generateToken(user);
   res.cookie("token", token,
-    { httpOnly: true, secure: false, sameSite: "lax", path: "/" }
+    { httpOnly: true, secure: false, path: "/" }
   );
 
   return res.status(201)
     .json({ status: 'success', data: { id: user._id, name: user.name, email: user.email } });
 });
 
+userRouter.post('/login', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const hashedPassword = createHmac('sha256', user.salt)
+      .update(password)
+      .digest('hex');
+
+    // compare passwords
+    if (hashedPassword !== user.password) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const token = generateToken(user);
+
+    // set token as cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      path: "/",
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// get all users
 userRouter.get("/users", async (req, res) => {
   try {
-    const users = await User.findOne();
+    const users = await User.find().select("-password -salt")
 
     res.status(200).json({
       status: "success",

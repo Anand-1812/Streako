@@ -2,9 +2,8 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
-function Signup() {
+function Login() {
   const [userData, setUserData] = useState({
-    name: "",
     email: "",
     password: ""
   });
@@ -18,16 +17,16 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!userData.name || !userData.email || !userData.password) {
+    if (!userData.email || !userData.password) {
       toast.error("Please fill all fields");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:7000/user/signup", {
+      const response = await fetch("http://localhost:7000/home/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // important for cookies (JWT)
+        credentials: "include",
         body: JSON.stringify(userData)
       });
 
@@ -35,13 +34,13 @@ function Signup() {
       console.log(data);
 
       if (response.ok) {
-        toast.success("Signup successful");
+        toast.success("Login successful");
         setTimeout(() => navigate("/home/user"), 1000);
       } else {
-        toast.error(data.error || "Signup failed");
+        toast.error(data.error || "Login failed");
       }
     } catch (error) {
-      console.error("Signup error:", error);
+      console.error("login error:", error);
       toast.error("Something went wrong");
     }
   };
@@ -71,28 +70,11 @@ function Signup() {
           </p>
         </div>
 
-        {/* Right - Signup Form */}
+        {/* Right - Login Form */}
         <form
           onSubmit={handleSubmit}
           className="md:w-2/3 p-12 flex flex-col gap-6 bg-white dark:bg-gray-800"
         >
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              required
-              value={userData.name}
-              onChange={handleChange}
-              placeholder="Your Name"
-              className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
-          </div>
-
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -132,21 +114,13 @@ function Signup() {
             type="submit"
             className="w-full mt-4 rounded-2xl bg-black dark:bg-gray-900 text-white font-semibold py-3 shadow-lg hover:opacity-90 transition duration-300"
           >
-            Sign Up
+            Log in
           </button>
-
-          {/* Footer */}
-          <p className="mt-6 text-center text-gray-600 dark:text-gray-300 text-sm">
-            Already have an account?{" "}
-            <NavLink to="/home/login" className="font-semibold text-red-500 hover:text-red-400">
-              Sign in
-            </NavLink>
-          </p>
         </form>
       </div>
     </div>
   );
 }
 
-export default Signup;
+export default Login;
 

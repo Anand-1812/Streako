@@ -72,7 +72,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
 
         <h1
-          className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-wide
+          className="font-display text-2xl md:text-4xl font-bold text-gray-900 dark:text-white tracking-wide
           bg-clip-text cursor-pointer
           transition-transform duration-300 transform hover:scale-105"
         >

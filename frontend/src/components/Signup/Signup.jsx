@@ -24,7 +24,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("http://localhost:7000/user/signup", {
+      const response = await fetch("http://localhost:7000/home/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // important for cookies (JWT)

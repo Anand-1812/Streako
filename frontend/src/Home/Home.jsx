@@ -23,7 +23,7 @@ function Home() {
   ];
 
   return (
-    <div className="flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white overflow-x-hidden scroll-smooth">
+    <div className="flex flex-col bg-gray-200 dark:bg-gray-900 text-gray-900 dark:text-white overflow-x-hidden scroll-smooth">
       {/* Home Section */}
       <section
         id="home"

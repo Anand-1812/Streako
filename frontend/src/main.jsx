@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard/Dashboard.jsx"
 import Signup from './components/Signup/Signup.jsx'
 import UserHome from './components/Users/UserHome.jsx'
 import Login from './components/Login/Login.jsx'
+import ContextProvider from './context/Context.jsx'
 
 const router = createBrowserRouter(
   [
@@ -30,7 +31,7 @@ const router = createBrowserRouter(
 ;
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <ContextProvider>
     <RouterProvider router={router} />
-  </StrictMode>,
+  </ContextProvider>,
 )

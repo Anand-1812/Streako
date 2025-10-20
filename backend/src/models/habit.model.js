@@ -15,13 +15,15 @@ const habitSchema = new Schema({
     type: Number,
     default: 0,
   },
-  history: {
-    date: { type: Date },
-    completed: { type: Boolean, default: false },
-  },
+  history: [
+    {
+      date: { type: Date },
+      completed: { type: Boolean, default: false },
+    },
+  ],
 }, { timestamps: true });
 
-const Habit = mongoose.model('habit', userSchema);
+const Habit = mongoose.model('habit', habitSchema);
 export default Habit;
 
 

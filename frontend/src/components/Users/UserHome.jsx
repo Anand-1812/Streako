@@ -14,7 +14,7 @@ function UserHome() {
   const [adding, setAdding] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Fetch user and habits
+  // Fetch user and habits on mount
   useEffect(() => {
     const fetchUserAndHabits = async () => {
       try {
@@ -35,7 +35,16 @@ function UserHome() {
         });
         const dataHabits = await resHabits.json();
 
-        if (resHabits.ok) setHabits(dataHabits.data || []);
+        if (resHabits.ok) {
+          const today = new Date().toDateString();
+          const enrichedHabits = (dataHabits.data || []).map(habit => {
+            const completedToday = habit.history?.some(
+              entry => new Date(entry.date).toDateString() === today && entry.completed
+            );
+            return { ...habit, isCompletedToday: completedToday };
+          });
+          setHabits(enrichedHabits);
+        }
       } catch (err) {
         console.error("Fetch error:", err);
         setUser(null);
@@ -63,7 +72,14 @@ function UserHome() {
 
       const data = await res.json();
       if (res.ok) {
-        setHabits((prev) => [data.data, ...prev]);
+        const today = new Date().toDateString();
+        const newHabit = {
+          ...data.data,
+          isCompletedToday: data.data.history?.some(
+            entry => new Date(entry.date).toDateString() === today && entry.completed
+          ),
+        };
+        setHabits((prev) => [newHabit, ...prev]);
         setTitle("");
         setDescription("");
         setIsFormOpen(false);
@@ -86,12 +102,21 @@ function UserHome() {
         method: "PATCH",
         credentials: "include",
       });
-
       const data = await res.json();
 
       if (res.ok) {
-        setHabits((prev) =>
-          prev.map((habit) => (habit._id === id ? data.data : habit))
+        const today = new Date().toDateString();
+        setHabits(prev =>
+          prev.map(habit => {
+            if (habit._id === id) {
+              const updatedHabit = data.data;
+              const completedToday = updatedHabit.history?.some(
+                entry => new Date(entry.date).toDateString() === today && entry.completed
+              );
+              return { ...updatedHabit, isCompletedToday: completedToday };
+            }
+            return habit;
+          })
         );
         toast.success("Habit updated!");
       } else {
@@ -135,7 +160,7 @@ function UserHome() {
     <div className="min-h-[calc(100vh-64px)] pt-24 pb-12 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* Welcome */}
+        {/* Welcome Section */}
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">
             Welcome back,{" "}
@@ -205,7 +230,7 @@ function UserHome() {
           </form>
         )}
 
-        {/* Habits Grid */}
+        {/* Habits Grid or Empty State */}
         {isNewUser && !isFormOpen ? (
           <div className="text-center p-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-3xl mx-auto mt-8">
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
@@ -218,13 +243,7 @@ function UserHome() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {habits.map((habit) => {
-              const today = new Date();
-              const isCompletedToday = habit.history?.some(
-                (entry) =>
-                  new Date(entry.date).toDateString() === today.toDateString() &&
-                  entry.completed
-              );
-
+              const { isCompletedToday } = habit;
               return (
                 <div
                   key={habit._id}
@@ -254,11 +273,13 @@ function UserHome() {
                       )}
                     </button>
                   </div>
+
                   {habit.description && (
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 mb-3">
                       {habit.description}
                     </p>
                   )}
+
                   <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
                     <p className="text-md font-bold text-green-600 dark:text-green-400">
                       🔥 Streak: {habit.streak || 0} days

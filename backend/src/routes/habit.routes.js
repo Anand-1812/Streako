@@ -34,10 +34,20 @@ habitRouter.post("/habits/add", protect, async (req, res) => {
 habitRouter.get("/habits", protect, async (req, res) => {
   try {
     const userId = req.user._id;
-
     const habits = await Habit.find({ userId }).sort({ createdAt: -1 });
 
-    res.status(200).json({ status: "success", data: habits });
+    const today = new Date();
+
+    // Add computed property for frontend
+    const updatedHabits = habits.map((habit) => {
+      const todayEntry = habit.history.find((h) => isSameDay(h.date, today));
+      return {
+        ...habit.toObject(),
+        completedToday: !!(todayEntry && todayEntry.completed),
+      };
+    });
+
+    res.status(200).json({ status: "success", data: updatedHabits });
   } catch (error) {
     console.error("Error fetching habits:", error);
     res.status(500).json({ error: "Habit fetching internal error" });

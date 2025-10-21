@@ -14,11 +14,15 @@ function UserHome() {
   const [adding, setAdding] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  // Fetch user and habits
   useEffect(() => {
     const fetchUserAndHabits = async () => {
       try {
-        const resUser = await fetch("http://localhost:7000/home/user", { credentials: "include" });
+        const resUser = await fetch("http://localhost:7000/home/user", {
+          credentials: "include",
+        });
         const dataUser = await resUser.json();
+
         if (resUser.ok) {
           setUser(dataUser.data);
           setIsLoggedIn(true);
@@ -26,18 +30,24 @@ function UserHome() {
           setUser(null);
         }
 
-        const resHabits = await fetch("http://localhost:7000/home/habits", { credentials: "include" });
+        const resHabits = await fetch("http://localhost:7000/home/habits", {
+          credentials: "include",
+        });
         const dataHabits = await resHabits.json();
+
         if (resHabits.ok) setHabits(dataHabits.data || []);
       } catch (err) {
+        console.error("Fetch error:", err);
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
+
     fetchUserAndHabits();
   }, []);
 
+  // Add a new habit
   const addHabit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error("Habit title is required");
@@ -50,6 +60,7 @@ function UserHome() {
         credentials: "include",
         body: JSON.stringify({ title, description }),
       });
+
       const data = await res.json();
       if (res.ok) {
         setHabits((prev) => [data.data, ...prev]);
@@ -61,21 +72,38 @@ function UserHome() {
         toast.error(data.error || "Failed to add habit");
       }
     } catch (err) {
+      console.error("Add habit error:", err);
       toast.error("Server error");
     } finally {
       setAdding(false);
     }
   };
 
-  const toggleHabitCompletion = (id) => {
-    setHabits((prev) =>
-      prev.map((h) =>
-        h._id === id ? { ...h, isCompletedToday: !h.isCompletedToday } : h
-      )
-    );
-    toast.success("Habit status updated!");
+  // Toggle habit completion
+  const toggleHabitCompletion = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:7000/home/habits/${id}/toggle`, {
+        method: "PATCH",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setHabits((prev) =>
+          prev.map((habit) => (habit._id === id ? data.data : habit))
+        );
+        toast.success("Habit updated!");
+      } else {
+        toast.error(data.error || "Failed to update habit");
+      }
+    } catch (err) {
+      console.error("Toggle error:", err);
+      toast.error("Server error");
+    }
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -87,6 +115,7 @@ function UserHome() {
     );
   }
 
+  // Access denied state
   if (!user) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-8 text-center">
@@ -94,7 +123,7 @@ function UserHome() {
           Access Denied 🔒
         </h1>
         <p className="text-lg text-gray-700 dark:text-gray-300">
-          We couldn't retrieve your user information. Please log in again.
+          Please log in again to access your dashboard.
         </p>
       </div>
     );
@@ -116,13 +145,17 @@ function UserHome() {
             !
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400">
-            {isNewUser ? "Start a streak by adding your first habit." : "What will you accomplish today?"}
+            {isNewUser
+              ? "Start a streak by adding your first habit."
+              : "What will you accomplish today?"}
           </p>
         </header>
 
         {/* Habits Header */}
         <div className="flex justify-between items-center mb-6 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Habits</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Your Habits
+          </h2>
           <button
             onClick={() => setIsFormOpen(!isFormOpen)}
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-200"
@@ -179,50 +212,72 @@ function UserHome() {
               Get Started! Define Your First Goal
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Click **Add New Habit** above to start tracking your first streak.
+              Click <strong>Add New Habit</strong> above to start tracking your first streak.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {habits.map((habit) => (
-              <div
-                key={habit._id}
-                className={`p-6 rounded-xl shadow-md transition-all duration-300
-                  ${habit.isCompletedToday
-                    ? "bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500"
-                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg"
+            {habits.map((habit) => {
+              const today = new Date();
+              const isCompletedToday = habit.history?.some(
+                (entry) =>
+                  new Date(entry.date).toDateString() === today.toDateString() &&
+                  entry.completed
+              );
+
+              return (
+                <div
+                  key={habit._id}
+                  className={`p-6 rounded-xl shadow-md transition-all duration-300 ${
+                    isCompletedToday
+                      ? "bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500"
+                      : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg"
                   }`}
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="font-bold text-xl text-gray-900 dark:text-white">{habit.title}</h3>
-                  <button
-                    onClick={() => toggleHabitCompletion(habit._id)}
-                    className={`p-1.5 rounded-full transition-colors duration-200
-                      ${habit.isCompletedToday
-                        ? "bg-green-500 text-white hover:bg-green-600"
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-bold text-xl text-gray-900 dark:text-white">
+                      {habit.title}
+                    </h3>
+                    <button
+                      onClick={() => toggleHabitCompletion(habit._id)}
+                      className={`p-1.5 rounded-full transition-colors duration-200 ${
+                        isCompletedToday
+                          ? "bg-green-500 text-white hover:bg-green-600"
+                          : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                       }`}
-                    title={habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"}
-                  >
-                    {habit.isCompletedToday ? <CheckCircle className="w-5 h-5" /> : <PlusCircle className="w-5 h-5" />}
-                  </button>
+                      title={isCompletedToday ? "Mark Incomplete" : "Mark Complete"}
+                    >
+                      {isCompletedToday ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : (
+                        <PlusCircle className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  {habit.description && (
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 mb-3">
+                      {habit.description}
+                    </p>
+                  )}
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
+                    <p className="text-md font-bold text-green-600 dark:text-green-400">
+                      🔥 Streak: {habit.streak || 0} days
+                    </p>
+                    <span
+                      className={`text-xs font-medium px-2 py-1 rounded-full ${
+                        isCompletedToday
+                          ? "bg-green-200 text-green-800"
+                          : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      {isCompletedToday ? "DONE" : "PENDING"}
+                    </span>
+                  </div>
                 </div>
-                {habit.description && (
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 mb-3">{habit.description}</p>
-                )}
-                <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
-                  <p className="text-md font-bold text-green-600 dark:text-green-400">
-                    🔥 Streak: {habit.streak || 0} days
-                  </p>
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${habit.isCompletedToday ? 'bg-green-200 text-green-800' : 'bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}`}>
-                    {habit.isCompletedToday ? 'DONE' : 'PENDING'}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
-
       </div>
     </div>
   );

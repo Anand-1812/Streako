@@ -32,23 +32,23 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
   const handleLogout = () => {
     if (logoutUser) {
-        logoutUser();
+      logoutUser();
     }
     navigate("/home/login");
   };
 
   const handleActionClick = () => {
-      if (isLoggedIn) {
-          navigate("home/user/dashboard");
-      } else {
-          navigate("home/singup");
-      }
+    if (isLoggedIn) {
+      navigate("home/user/dashboard");
+    } else {
+      navigate("home/signup");
+    }
   }
 
   const ActionButton = () => {
     const buttonText = isLoggedIn && user?.name ? user.name : "Get Started";
     const bgColor = isLoggedIn ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-black" :
-                                 "bg-black text-white dark:bg-white dark:text-black";
+      "bg-black text-white dark:bg-white dark:text-black";
 
     return (
       <button
@@ -84,13 +84,13 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           <ActionButton />
 
           {isLoggedIn && (
-              <button
-                  onClick={handleLogout}
-                  className="p-2 rounded-md border bg-red-100 dark:bg-red-400/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-700 transition-colors duration-300"
-                  title="Logout"
-              >
-                  <LogOut className="w-5 h-5" />
-              </button>
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-md border bg-red-100 dark:bg-red-400/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-700 transition-colors duration-300"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           )}
 
           <button

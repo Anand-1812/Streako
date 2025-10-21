@@ -4,6 +4,7 @@ import express from "express";
 import connectDB from "./db/index.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
+import habitRouter from "./routes/habit.routes.js";
 
 // connection with the databse
 dotenv.config({
@@ -15,7 +16,6 @@ const app = express();
 app.use(express.json());
 app.use(cors({
   origin: "http://localhost:5173",
-  origin: "http://localhost:5174",
   credentials: true,
 }));
 app.use(cookieParser());
@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
   res.send("backend is running")
 })
 app.use('/home', userRouter);
+app.use('/home', habitRouter)
 
 const PORT = process.env.APP_PORT || 7123
 

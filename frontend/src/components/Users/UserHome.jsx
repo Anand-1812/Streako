@@ -14,7 +14,12 @@ function UserHome() {
   const [adding, setAdding] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Fetch user and habits on mount
+  const isSameDay = (d1, d2) =>
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+
+  // Fetch user and habits
   useEffect(() => {
     const fetchUserAndHabits = async () => {
       try {
@@ -36,14 +41,17 @@ function UserHome() {
         const dataHabits = await resHabits.json();
 
         if (resHabits.ok) {
-          const today = new Date().toDateString();
-          const enrichedHabits = (dataHabits.data || []).map(habit => {
-            const completedToday = habit.history?.some(
-              entry => new Date(entry.date).toDateString() === today && entry.completed
-            );
-            return { ...habit, isCompletedToday: completedToday };
+          // Enrich habits with today status
+          const today = new Date();
+          const enriched = (dataHabits.data || []).map((habit) => {
+            const lastEntry = habit.history?.[habit.history.length - 1];
+            const isCompletedToday =
+              lastEntry && isSameDay(new Date(lastEntry.date), today)
+                ? lastEntry.completed
+                : false;
+            return { ...habit, isCompletedToday };
           });
-          setHabits(enrichedHabits);
+          setHabits(enriched);
         }
       } catch (err) {
         console.error("Fetch error:", err);
@@ -72,14 +80,10 @@ function UserHome() {
 
       const data = await res.json();
       if (res.ok) {
-        const today = new Date().toDateString();
-        const newHabit = {
-          ...data.data,
-          isCompletedToday: data.data.history?.some(
-            entry => new Date(entry.date).toDateString() === today && entry.completed
-          ),
-        };
-        setHabits((prev) => [newHabit, ...prev]);
+        setHabits((prev) => [
+          { ...data.data, isCompletedToday: false },
+          ...prev,
+        ]);
         setTitle("");
         setDescription("");
         setIsFormOpen(false);
@@ -95,25 +99,31 @@ function UserHome() {
     }
   };
 
-  // Toggle habit completion
+  // Toggle habit completion for today
   const toggleHabitCompletion = async (id) => {
     try {
-      const res = await fetch(`http://localhost:7000/home/habits/${id}/toggle`, {
-        method: "PATCH",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `http://localhost:7000/home/habits/${id}/toggle`,
+        {
+          method: "PATCH",
+          credentials: "include",
+        }
+      );
       const data = await res.json();
 
       if (res.ok) {
-        const today = new Date().toDateString();
-        setHabits(prev =>
-          prev.map(habit => {
+        const today = new Date();
+        setHabits((prev) =>
+          prev.map((habit) => {
             if (habit._id === id) {
               const updatedHabit = data.data;
-              const completedToday = updatedHabit.history?.some(
-                entry => new Date(entry.date).toDateString() === today && entry.completed
-              );
-              return { ...updatedHabit, isCompletedToday: completedToday };
+              const lastEntry =
+                updatedHabit.history?.[updatedHabit.history.length - 1];
+              const isCompletedToday =
+                lastEntry && isSameDay(new Date(lastEntry.date), today)
+                  ? lastEntry.completed
+                  : false;
+              return { ...updatedHabit, isCompletedToday };
             }
             return habit;
           })
@@ -128,7 +138,6 @@ function UserHome() {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -140,7 +149,6 @@ function UserHome() {
     );
   }
 
-  // Access denied state
   if (!user) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-8 text-center">
@@ -159,7 +167,6 @@ function UserHome() {
   return (
     <div className="min-h-[calc(100vh-64px)] pt-24 pb-12 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6">
-
         {/* Welcome Section */}
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">
@@ -230,73 +237,70 @@ function UserHome() {
           </form>
         )}
 
-        {/* Habits Grid or Empty State */}
+        {/* Habits Grid */}
         {isNewUser && !isFormOpen ? (
           <div className="text-center p-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-3xl mx-auto mt-8">
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
               Get Started! Define Your First Goal
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Click <strong>Add New Habit</strong> above to start tracking your first streak.
+              Click <strong>Add New Habit</strong> above to start tracking your
+              first streak.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {habits.map((habit) => {
-              const { isCompletedToday } = habit;
-              return (
-                <div
-                  key={habit._id}
-                  className={`p-6 rounded-xl shadow-md transition-all duration-300 ${
-                    isCompletedToday
-                      ? "bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500"
-                      : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg"
+            {habits.map((habit) => (
+              <div
+                key={habit._id}
+                className={`p-6 rounded-xl shadow-md transition-all duration-300 ${habit.isCompletedToday
+                    ? "bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500"
+                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg"
                   }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-xl text-gray-900 dark:text-white">
-                      {habit.title}
-                    </h3>
-                    <button
-                      onClick={() => toggleHabitCompletion(habit._id)}
-                      className={`p-1.5 rounded-full transition-colors duration-200 ${
-                        isCompletedToday
-                          ? "bg-green-500 text-white hover:bg-green-600"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+              >
+                <div className="flex justify-between items-start">
+                  <h3 className="font-bold text-xl text-gray-900 dark:text-white">
+                    {habit.title}
+                  </h3>
+                  <button
+                    onClick={() => toggleHabitCompletion(habit._id)}
+                    className={`p-1.5 rounded-full transition-colors duration-200 ${habit.isCompletedToday
+                        ? "bg-green-500 text-white hover:bg-green-600"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                       }`}
-                      title={isCompletedToday ? "Mark Incomplete" : "Mark Complete"}
-                    >
-                      {isCompletedToday ? (
-                        <CheckCircle className="w-5 h-5" />
-                      ) : (
-                        <PlusCircle className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-
-                  {habit.description && (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 mb-3">
-                      {habit.description}
-                    </p>
-                  )}
-
-                  <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
-                    <p className="text-md font-bold text-green-600 dark:text-green-400">
-                      🔥 Streak: {habit.streak || 0} days
-                    </p>
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded-full ${
-                        isCompletedToday
-                          ? "bg-green-200 text-green-800"
-                          : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                      }`}
-                    >
-                      {isCompletedToday ? "DONE" : "PENDING"}
-                    </span>
-                  </div>
+                    title={
+                      habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"
+                    }
+                  >
+                    {habit.isCompletedToday ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      <PlusCircle className="w-5 h-5" />
+                    )}
+                  </button>
                 </div>
-              );
-            })}
+
+                {habit.description && (
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mt-2 mb-3">
+                    {habit.description}
+                  </p>
+                )}
+
+                <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <p className="text-md font-bold text-green-600 dark:text-green-400">
+                    🔥 Streak: {habit.streak || 0} days
+                  </p>
+                  <span
+                    className={`text-xs font-medium px-2 py-1 rounded-full ${habit.isCompletedToday
+                        ? "bg-green-200 text-green-800"
+                        : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                      }`}
+                  >
+                    {habit.isCompletedToday ? "DONE" : "PENDING"}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

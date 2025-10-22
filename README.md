@@ -1,6 +1,6 @@
 # Streako
 
-#Not you usual habit tracker
+# Not you usual habit tracker
 
 Streako is a full-stack habit tracker designed to help users build and maintain daily routines. It features an intuitive interface, streak tracking, and personalized progress visualization.
 
@@ -92,7 +92,7 @@ npm run dev
 ## 🎯 Usage
 
 1. Open the frontend in your browser.
-2. currentlt first Sign up, then log in to start tracking your habits.
+2. Sign up, to start tracking your habits, further you can also login to see your existing habit.
 3. Add, complete, and monitor your habits on the dashboard.
 4. Check analytics to see your streaks and habit performance over time.
 

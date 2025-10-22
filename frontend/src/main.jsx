@@ -20,10 +20,10 @@ const router = createBrowserRouter(
         { index: true, element: <Navigate to="/home" replace /> },
         { path: 'home', element: <Home /> },
         { path: 'about', element: <About /> },
-        { path: 'home/dashboard', element: <Dashboard /> },
         { path: 'home/signup', element: <Signup /> },
         { path: 'home/login', element: <Login /> },
-        { path: 'home/user', element: <UserHome /> }
+        { path: 'home/user', element: <UserHome /> },
+        { path: 'home/user/dashboard', element: <Dashboard /> },
       ]
     }
   ]

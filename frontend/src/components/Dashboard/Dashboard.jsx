@@ -18,13 +18,6 @@ function Dashboard() {
   const navigate = useNavigate();
   const [userEmail, setUserEmail] = useState(null);
 
-  useEffect(() => {
-    const signedUp = localStorage.getItem("hasSignedUp") === "true";
-    const email = localStorage.getItem("userEmail");
-
-    if (!signedUp) navigate("/signup");
-    else setUserEmail(email);
-  }, []);
 
   const [habits, setHabits] = useState([
     { id: 1, task: "Read 20 pages", done: true },

@@ -58,37 +58,30 @@ habitRouter.get("/habits", protect, async (req, res) => {
 habitRouter.patch("/habits/:id/toggle", protect, async (req, res) => {
   try {
     const habit = await Habit.findById(req.params.id);
-    if (!habit) {
-      return res.status(404).json({ error: "Habit not found" });
-    }
+    if (!habit) return res.status(404).json({ error: "Habit not found" });
 
     const today = new Date();
     const todayEntry = habit.history.find((h) => isSameDay(h.date, today));
 
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayEntry = habit.history.find((h) => isSameDay(h.date, yesterday));
+
     if (todayEntry) {
-      // Toggle completion for today
+      // Toggle today
       todayEntry.completed = !todayEntry.completed;
 
-      // Adjust streak if user unmarks today's completion
-      if (!todayEntry.completed) {
+      if (todayEntry.completed) {
+        // Marked completed: recalc streak
+        habit.streak = yesterdayEntry && yesterdayEntry.completed ? habit.streak + 1 : 1;
+      } else {
+        // Marked incomplete: decrease streak
         habit.streak = Math.max(0, habit.streak - 1);
       }
     } else {
-      // Mark today as completed
+      // No entry today: mark completed
       habit.history.push({ date: today, completed: true });
-
-      // Check yesterday for streak continuation
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-      const yesterdayEntry = habit.history.find((h) =>
-        isSameDay(h.date, yesterday)
-      );
-
-      if (yesterdayEntry && yesterdayEntry.completed) {
-        habit.streak += 1;
-      } else {
-        habit.streak = 1;
-      }
+      habit.streak = yesterdayEntry && yesterdayEntry.completed ? habit.streak + 1 : 1;
     }
 
     await habit.save();

@@ -214,7 +214,7 @@ function Dashboard() {
               <LineChart data={lineData}>
                 <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                 <XAxis dataKey="name" stroke="#8884d8" />
-                <YAxis stroke="#8884d8" />
+                <YAxis stroke="#8884d8" allowDecimals={false}  />
                 <Tooltip />
                 <Line
                   type="monotone"

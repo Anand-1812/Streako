@@ -100,4 +100,3 @@ habitRouter.patch("/habits/:id/toggle", protect, async (req, res) => {
 });
 
 export default habitRouter;
-

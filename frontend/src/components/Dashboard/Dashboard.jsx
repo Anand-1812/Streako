@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Calendar, Trophy, CheckCircle2 } from "lucide-react";
 import {
   LineChart,
@@ -12,63 +12,175 @@ import {
   Bar,
 } from "recharts";
 import FloatingDiv from "../FloatingDivs/FloatingDiv";
+import { Context } from "../../context/Context";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Dashboard() {
+  const { user, setUser, setIsLoggedIn } = useContext(Context);
+  const [loading, setLoading] = useState(true);
+  const [habits, setHabits] = useState([]);
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState(null);
 
+  const isSameDay = (d1, d2) =>
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 
-  const [habits, setHabits] = useState([
-    { id: 1, task: "Read 20 pages", done: true },
-    { id: 2, task: "Code 4 hours", done: true },
-    { id: 3, task: "Gym 1.5 hours", done: false },
-  ]);
+  useEffect(() => {
+    const fetchUserAndHabits = async () => {
+      try {
+        const resUser = await fetch("http://localhost:7000/home/user", {
+          credentials: "include",
+        });
+        const dataUser = await resUser.json();
 
-  const toggleHabit = (id) => {
-    setHabits((prev) =>
-      prev.map((habit) =>
-        habit.id === id ? { ...habit, done: !habit.done } : habit
-      )
-    );
+        if (resUser.ok) {
+          setUser(dataUser.data);
+          setIsLoggedIn(true);
+        } else {
+          setUser(null);
+          navigate("/home/login");
+        }
+
+        const resHabits = await fetch("http://localhost:7000/home/habits", {
+          credentials: "include",
+        });
+        const dataHabits = await resHabits.json();
+
+        if (resHabits.ok) {
+          const today = new Date();
+          const enriched = (dataHabits.data || []).map((habit) => {
+            const lastEntry = habit.history?.[habit.history.length - 1];
+            const isCompletedToday =
+              lastEntry && isSameDay(new Date(lastEntry.date), today)
+                ? lastEntry.completed
+                : false;
+            return { ...habit, isCompletedToday };
+          });
+          setHabits(enriched);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserAndHabits();
+  }, []);
+
+  const toggleHabit = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:7000/home/habits/${id}/toggle`,
+        {
+          method: "PATCH",
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+
+      if (res.ok) {
+        const today = new Date();
+        setHabits((prev) =>
+          prev.map((habit) => {
+            if (habit._id === id) {
+              const updatedHabit = data.data;
+              const lastEntry =
+                updatedHabit.history?.[updatedHabit.history.length - 1];
+              const isCompletedToday =
+                lastEntry && isSameDay(new Date(lastEntry.date), today)
+                  ? lastEntry.completed
+                  : false;
+              return { ...updatedHabit, isCompletedToday };
+            }
+            return habit;
+          })
+        );
+        toast.success("Habit updated!");
+      } else {
+        toast.error(data.error || "Failed to update habit");
+      }
+    } catch (err) {
+      console.error("Toggle error:", err);
+      toast.error("Server error");
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <p className="text-xl text-gray-600 dark:text-gray-300">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <h1 className="text-3xl font-bold text-red-600 dark:text-red-400 mb-2">
+          Access Denied 🔒
+        </h1>
+        <p className="text-gray-700 dark:text-gray-300">
+          Please log in to view your dashboard.
+        </p>
+      </div>
+    );
+  }
+
+  // --- Metrics calculation ---
+  const completedToday = habits.filter((h) => h.isCompletedToday).length;
+  const totalHabits = habits.length;
+  const totalStreaks = habits.reduce((acc, h) => acc + (h.streak || 0), 0);
+
   const mockMetrics = [
-    { label: "Current Streak", value: 5, icon: <Calendar className="w-6 h-6 text-blue-500" /> },
-    { label: "Best Streak", value: 10, icon: <Trophy className="w-6 h-6 text-yellow-500" /> },
-    { label: "Completion Rate", value: "69%", icon: <CheckCircle2 className="w-6 h-6 text-green-500" /> },
+    {
+      label: "Habits Today",
+      value: `${completedToday}/${totalHabits}`,
+      icon: <Calendar className="text-blue-600 dark:text-blue-400" />,
+    },
+    {
+      label: "Total Streaks",
+      value: totalStreaks,
+      icon: <Trophy className="text-yellow-500" />,
+    },
+    {
+      label: "Completed Habits",
+      value: completedToday,
+      icon: <CheckCircle2 className="text-green-500" />,
+    },
   ];
 
-  const lineData = [
-    { day: "Mon", streak: 3 },
-    { day: "Tue", streak: 4 },
-    { day: "Wed", streak: 5 },
-    { day: "Thu", streak: 5 },
-    { day: "Fri", streak: 6 },
-    { day: "Sat", streak: 6 },
-    { day: "Sun", streak: 7 },
-  ];
+  // --- Chart Data ---
+  const lineData = habits.map((habit) => ({
+    name: habit.title,
+    streak: habit.streak || 0,
+  }));
 
   const barData = habits.map((habit) => ({
-    name: habit.task,
-    completed: habit.done ? 1 : 0,
+    name: habit.title,
+    completed: habit.isCompletedToday ? 1 : 0,
   }));
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-hidden">
+    <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24">
       <FloatingDiv />
 
-      <div className="relative z-10 w-full max-w-5xl flex flex-col gap-12">
-
+      <div className="w-full max-w-5xl flex flex-col gap-12 relative z-10">
         {/* Welcome Message */}
-        {userEmail && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Welcome back, <span className="text-blue-600 dark:text-blue-400">{userEmail}</span>!
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">Here's your habit dashboard:</p>
-          </div>
-        )}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Welcome back,{" "}
+            <span className="text-blue-600 dark:text-blue-400">
+              {user.name}
+            </span>
+            !
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
+            Here's your progress overview:
+          </p>
+        </div>
 
         {/* Metrics */}
         <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
@@ -77,39 +189,57 @@ function Dashboard() {
               key={metric.label}
               className="flex-1 flex items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
-              <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-full">{metric.icon}</div>
+              <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-full">
+                {metric.icon}
+              </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">{metric.value}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{metric.label}</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {metric.value}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {metric.label}
+                </p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Graphs */}
+        {/* Charts */}
         <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
-          {/* Line Chart */}
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Weekly Streak</h3>
-            <ResponsiveContainer width="100%" height={200}>
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl">
+            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
+              Streaks per Habit
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
               <LineChart data={lineData}>
                 <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                <XAxis dataKey="day" stroke="#8884d8" />
+                <XAxis dataKey="name" stroke="#8884d8" />
                 <YAxis stroke="#8884d8" />
                 <Tooltip />
-                <Line type="monotone" dataKey="streak" stroke="#4f46e5" strokeWidth={3} />
+                <Line
+                  type="monotone"
+                  dataKey="streak"
+                  stroke="#4f46e5"
+                  strokeWidth={3}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Bar Chart */}
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Habit Completion</h3>
-            <ResponsiveContainer width="100%" height={200}>
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl">
+            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
+              Today's Habit Completion
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={barData} layout="vertical">
                 <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
                 <XAxis type="number" hide />
-                <YAxis type="category" dataKey="name" stroke="#8884d8" width={150} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  stroke="#8884d8"
+                  width={150}
+                />
                 <Tooltip />
                 <Bar dataKey="completed" fill="#4f46e5" radius={[4, 4, 4, 4]} />
               </BarChart>
@@ -117,18 +247,25 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Habits */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-transform duration-300 flex flex-col gap-6">
-          <h3 className="text-gray-900 dark:text-white font-semibold text-xl">Today's Habits</h3>
+        {/* Habits List */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+          <h3 className="text-gray-900 dark:text-white font-semibold text-xl mb-4">
+            Today's Habits
+          </h3>
           {habits.map((habit) => (
             <div
-              key={habit.id}
-              onClick={() => toggleHabit(habit.id)}
+              key={habit._id}
+              onClick={() => toggleHabit(habit._id)}
               className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-all duration-300"
             >
-              <span className="text-gray-900 dark:text-gray-200 font-medium">{habit.task}</span>
-              <span className={`text-xl font-bold ${habit.done ? "text-green-500" : "text-red-500"}`}>
-                {habit.done ? "✅" : "❌"}
+              <span className="text-gray-900 dark:text-gray-200 font-medium">
+                {habit.title}
+              </span>
+              <span
+                className={`text-xl font-bold ${habit.isCompletedToday ? "text-green-500" : "text-red-500"
+                  }`}
+              >
+                {habit.isCompletedToday ? "✅" : "❌"}
               </span>
             </div>
           ))}

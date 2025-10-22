@@ -254,8 +254,8 @@ function UserHome() {
               <div
                 key={habit._id}
                 className={`p-6 rounded-xl shadow-md transition-all duration-300 ${habit.isCompletedToday
-                    ? "bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500"
-                    : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg"
+                  ? "bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500"
+                  : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg"
                   }`}
               >
                 <div className="flex justify-between items-start">
@@ -265,8 +265,8 @@ function UserHome() {
                   <button
                     onClick={() => toggleHabitCompletion(habit._id)}
                     className={`p-1.5 rounded-full transition-colors duration-200 ${habit.isCompletedToday
-                        ? "bg-green-500 text-white hover:bg-green-600"
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                      ? "bg-green-500 text-white hover:bg-green-600"
+                      : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                       }`}
                     title={
                       habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"
@@ -292,8 +292,8 @@ function UserHome() {
                   </p>
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-full ${habit.isCompletedToday
-                        ? "bg-green-200 text-green-800"
-                        : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                      ? "bg-green-200 text-green-800"
+                      : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                       }`}
                   >
                     {habit.isCompletedToday ? "DONE" : "PENDING"}
@@ -309,4 +309,3 @@ function UserHome() {
 }
 
 export default UserHome;
-

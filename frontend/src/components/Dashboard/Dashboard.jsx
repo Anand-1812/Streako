@@ -164,18 +164,15 @@ function Dashboard() {
   }));
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24">
+    <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-x-hidden">
       <FloatingDiv />
 
       <div className="w-full max-w-5xl flex flex-col gap-12 relative z-10">
         {/* Welcome Message */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center transition-colors duration-300">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Welcome back,{" "}
-            <span className="text-blue-600 dark:text-blue-400">
-              {user.name}
-            </span>
-            !
+            <span className="text-blue-600 dark:text-blue-400">{user.name}</span>!
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             Here's your progress overview:
@@ -206,69 +203,69 @@ function Dashboard() {
 
         {/* Charts */}
         <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl">
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl transition-colors duration-300">
             <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
               Streaks per Habit
             </h3>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={lineData}>
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                <XAxis dataKey="name" stroke="#8884d8" />
-                <YAxis stroke="#8884d8" allowDecimals={false}  />
-                <Tooltip />
+                <CartesianGrid stroke="#555" strokeDasharray="5 5" />
+                <XAxis
+                  dataKey="name"
+                  stroke="#aaa"
+                  tick={{ fill: "#ddd", fontSize: 12 }}
+                />
+                <YAxis
+                  stroke="#aaa"
+                  allowDecimals={false}
+                  tick={{ fill: "#ddd", fontSize: 12 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    borderRadius: "8px",
+                    border: "none",
+                    color: "#fff",
+                  }}
+                />
                 <Line
                   type="monotone"
                   dataKey="streak"
                   stroke="#4f46e5"
                   strokeWidth={3}
+                  dot={{ r: 4, strokeWidth: 2, fill: "#4f46e5" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl">
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl transition-colors duration-300">
             <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
               Today's Habit Completion
             </h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={barData} layout="vertical">
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                <CartesianGrid stroke="#555" strokeDasharray="5 5" />
                 <XAxis type="number" hide />
                 <YAxis
                   type="category"
                   dataKey="name"
-                  stroke="#8884d8"
+                  stroke="#aaa"
                   width={150}
+                  tick={{ fill: "#ddd", fontSize: 12 }}
                 />
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1f2937",
+                    borderRadius: "8px",
+                    border: "none",
+                    color: "#fff",
+                  }}
+                />
                 <Bar dataKey="completed" fill="#4f46e5" radius={[4, 4, 4, 4]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-
-        {/* Habits List */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-          <h3 className="text-gray-900 dark:text-white font-semibold text-xl mb-4">
-            Today's Habits
-          </h3>
-          {habits.map((habit) => (
-            <div
-              key={habit._id}
-              onClick={() => toggleHabit(habit._id)}
-              className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-4 rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-all duration-300"
-            >
-              <span className="text-gray-900 dark:text-gray-200 font-medium">
-                {habit.title}
-              </span>
-              <span
-                className={`text-xl font-bold ${habit.isCompletedToday ? "text-green-500" : "text-red-500"
-                  }`}
-              >
-                {habit.isCompletedToday ? "✅" : "❌"}
-              </span>
-            </div>
-          ))}
         </div>
       </div>
     </section>

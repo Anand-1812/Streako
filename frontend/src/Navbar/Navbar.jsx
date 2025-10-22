@@ -7,13 +7,15 @@ import { Context } from "../context/Context";
 export default function Navbar({ menuOpen, setMenuOpen }) {
   const [darkMode, setDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
 
   const { isLoggedIn, user, logoutUser } = useContext(Context);
 
   const links = [
-    { name: "Home", path: "/" },
-    { name: "Dashboard", path: "/dashboard" },
+    { name: "Home", path: "/home" },
+    { name: "Signup", path: "/home/signup" },
+    { name: "Dashboard", path: "/home/user/dashboard" },
   ];
 
   useEffect(() => {
@@ -39,16 +41,18 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
   const handleActionClick = () => {
     if (isLoggedIn) {
-      navigate("home/user/dashboard");
+      setIsProfileOpen(!isProfileOpen);
     } else {
-      navigate("home/signup");
+      navigate("/home/signup");
     }
-  }
+  };
 
   const ActionButton = () => {
     const buttonText = isLoggedIn && user?.name ? user.name : "Get Started";
-    const bgColor = isLoggedIn ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-black" :
-      "bg-black text-white dark:bg-white dark:text-black";
+    const bgColor =
+      isLoggedIn
+        ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-black"
+        : "bg-black text-white dark:bg-white dark:text-black";
 
     return (
       <button
@@ -59,7 +63,6 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
       </button>
     );
   };
-
 
   return (
     <nav
@@ -79,18 +82,38 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           Streako
         </h1>
 
-        <div className="hidden md:flex gap-6 items-center text-lg">
+        <div className="hidden md:flex gap-6 items-center text-lg relative">
 
           <ActionButton />
 
-          {isLoggedIn && (
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-md border bg-red-100 dark:bg-red-400/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-700 transition-colors duration-300"
-              title="Logout"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
+          {isProfileOpen && isLoggedIn && (
+            <div className="absolute right-0 mt-36 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+              <ul className="flex flex-col">
+                <li>
+                  <button
+                    onClick={() => {
+                      navigate("/home/user/dashboard");
+                      setIsProfileOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-2"
+                  >
+                    Dashboard
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsProfileOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2 text-sm"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
           )}
 
           <button
@@ -130,3 +153,4 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
     </nav>
   );
 }
+

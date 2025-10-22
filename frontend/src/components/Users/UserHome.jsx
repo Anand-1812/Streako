@@ -143,7 +143,7 @@ function UserHome() {
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <Loader2 className="w-8 h-8 text-red-500 animate-spin mr-3" />
         <span className="text-xl font-medium text-gray-700 dark:text-gray-200">
-          Loading your dashboard...
+          Loading your Page...
         </span>
       </div>
     );
@@ -170,7 +170,7 @@ function UserHome() {
         {/* Welcome Section */}
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">
-            Welcome back,{" "}
+            Welcome {" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-pink-500">
               {user.name}
             </span>

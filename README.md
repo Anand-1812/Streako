@@ -1,6 +1,6 @@
 # Streako
 
-**Not you usual habit tracker**
+#Not you usual habit tracker
 
 Streako is a full-stack habit tracker designed to help users build and maintain daily routines. It features an intuitive interface, streak tracking, and personalized progress visualization.
 
@@ -20,13 +20,14 @@ Streako is a full-stack habit tracker designed to help users build and maintain 
 
 ### Frontend (`/frontend`)
 
-| Technology       | Purpose                                    |
-| ---------------- | ------------------------------------------ |
-| React            | Component-based library for UI development |
-| Vite             | Fast development server and bundler        |
-| Tailwind CSS     | Utility-first CSS framework for styling    |
-| Recharts         | Dynamic charts and graphs                  |
-| React Router DOM | Client-side navigation between views       |
+| Technology          | Purpose                                     |
+| ------------------- | ------------------------------------------  |
+| React               | Component-based library for UI development  |
+| Vite                | Fast development server and bundler         |
+| Tailwind CSS        | Utility-first CSS framework for styling     |
+| Recharts            | Dynamic charts and graphs                   |
+| React Router DOM    | Client-side navigation between views        |
+| @uiw/react-heat-map | For streaks like github                     |
 
 ### Backend (`/backend`)
 

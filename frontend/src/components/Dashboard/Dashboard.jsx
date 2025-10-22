@@ -11,10 +11,10 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import FloatingDiv from "../FloatingDivs/FloatingDiv";
 import { Context } from "../../context/Context";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import HeatMap from "@uiw/react-heat-map";
 
 function Dashboard() {
   const { user, setUser, setIsLoggedIn } = useContext(Context);
@@ -72,13 +72,10 @@ function Dashboard() {
 
   const toggleHabit = async (id) => {
     try {
-      const res = await fetch(
-        `http://localhost:7000/home/habits/${id}/toggle`,
-        {
-          method: "PATCH",
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`http://localhost:7000/home/habits/${id}/toggle`, {
+        method: "PATCH",
+        credentials: "include",
+      });
       const data = await res.json();
 
       if (res.ok) {
@@ -129,10 +126,18 @@ function Dashboard() {
     );
   }
 
-  // --- Metrics calculation ---
+  // --- Metrics ---
   const completedToday = habits.filter((h) => h.isCompletedToday).length;
   const totalHabits = habits.length;
   const totalStreaks = habits.reduce((acc, h) => acc + (h.streak || 0), 0);
+
+  // HeatMap data
+  const heatMapData = habits.flatMap((habit) =>
+    habit.history?.map((entry) => ({
+      date: entry.date,
+      count: entry.completed ? 1 : 0,
+    })) || []
+  );
 
   const mockMetrics = [
     {
@@ -152,7 +157,6 @@ function Dashboard() {
     },
   ];
 
-  // --- Chart Data ---
   const lineData = habits.map((habit) => ({
     name: habit.title,
     streak: habit.streak || 0,
@@ -163,18 +167,20 @@ function Dashboard() {
     completed: habit.isCompletedToday ? 1 : 0,
   }));
 
-  return (
-    <section className="relative w-full min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-x-hidden">
-      <FloatingDiv />
+  const today = new Date();
+  const startDate = new Date();
+  startDate.setMonth(today.getMonth() - 6); // last 6 months
 
-      <div className="w-full max-w-5xl flex flex-col gap-12 relative z-10">
-        {/* Welcome Message */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center transition-colors duration-300">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+  return (
+    <section className="relative w-full min-h-[calc(100vh-64px)] flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-x-hidden">
+      <div className="w-full max-w-6xl flex flex-col gap-12 relative z-10">
+        {/* Welcome */}
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl text-center transition-all duration-300">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
             Welcome back,{" "}
-            <span className="text-blue-600 dark:text-blue-400">{user.name}</span>!
+            <span className="text-red-400 dark:text-red-400">{user.name}</span>!
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-gray-600 dark:text-gray-300 mt-3">
             Here's your progress overview:
           </p>
         </div>
@@ -186,14 +192,14 @@ function Dashboard() {
               key={metric.label}
               className="flex-1 flex items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300"
             >
-              <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-full">
+              <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-full">
                 {metric.icon}
               </div>
               <div>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white">
                   {metric.value}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-md text-gray-500 dark:text-gray-400">
                   {metric.label}
                 </p>
               </div>
@@ -203,11 +209,12 @@ function Dashboard() {
 
         {/* Charts */}
         <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl transition-colors duration-300">
+          {/* Streaks per Habit */}
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
               Streaks per Habit
             </h3>
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={300}>
               <LineChart data={lineData}>
                 <CartesianGrid stroke="#555" strokeDasharray="5 5" />
                 <XAxis
@@ -218,7 +225,7 @@ function Dashboard() {
                 <YAxis
                   stroke="#aaa"
                   allowDecimals={false}
-                  tick={{ fill: "#ddd", fontSize: 12 }}
+                  tick={{ fill: "#ddd", fontSize: 16 }}
                 />
                 <Tooltip
                   contentStyle={{
@@ -233,17 +240,18 @@ function Dashboard() {
                   dataKey="streak"
                   stroke="#4f46e5"
                   strokeWidth={3}
-                  dot={{ r: 4, strokeWidth: 2, fill: "#4f46e5" }}
+                  dot={{ r: 5, strokeWidth: 2, fill: "#4f46e5" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl transition-colors duration-300">
+          {/* Today's Completion */}
+          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
               Today's Habit Completion
             </h3>
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barData} layout="vertical">
                 <CartesianGrid stroke="#555" strokeDasharray="5 5" />
                 <XAxis type="number" hide />
@@ -252,7 +260,7 @@ function Dashboard() {
                   dataKey="name"
                   stroke="#aaa"
                   width={150}
-                  tick={{ fill: "#ddd", fontSize: 12 }}
+                  tick={{ fill: "#ddd", fontSize: 16 }}
                 />
                 <Tooltip
                   contentStyle={{
@@ -265,6 +273,40 @@ function Dashboard() {
                 <Bar dataKey="completed" fill="#4f46e5" radius={[4, 4, 4, 4]} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* HeatMap Section */}
+        <div className="w-full bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl transition-shadow duration-300">
+          <h3 className="text-gray-900 dark:text-white font-semibold mb-6 text-xl text-center">
+            Daily Habit Contribution Graph
+          </h3>
+          <div className="flex justify-center overflow-x-auto pb-4">
+            <HeatMap
+              value={heatMapData}
+              startDate={startDate}
+              endDate={today}
+              width={1000}
+              height={150}
+              rectSize={16}
+              rectProps={{
+                rx: 3,
+                ry: 3,
+                stroke: "rgba(0,0,0,0.05)",
+              }}
+              panelColors={{
+                0: "#ebedf0",
+                1: "#9be9a8",
+                2: "#40c463",
+                3: "#30a14e",
+                4: "#216e39",
+                5: "#184b2c",
+              }}
+              style={{
+                color: "#216e39",
+                "--rhm-bg": "rgba(255, 255, 255, 0.05)",
+              }}
+            />
           </div>
         </div>
       </div>

@@ -7,122 +7,107 @@ function Home() {
   const features = [
     {
       title: "Track Streaks",
-      icon: <FaFire className="w-8 h-8 text-red-500 mb-3" />,
-      description: "See how many days you’ve maintained a habit and stay motivated.",
+      icon: <FaFire className="w-10 h-10 text-red-500 mb-4" />,
+      description:
+        "Visualize your daily consistency with a beautiful heatmap and progress insights.",
     },
     {
       title: "Daily Reminders",
-      icon: <FaBell className="w-8 h-8 text-red-500 mb-3" />,
-      description: "Never miss a habit with gentle reminders and notifications.",
+      icon: <FaBell className="w-10 h-10 text-red-500 mb-4" />,
+      description:
+        "Stay accountable with reminders that keep your habits alive every single day.",
     },
     {
-      title: "Analytics",
-      icon: <FaChartLine className="w-8 h-8 text-red-500 mb-3" />,
-      description: "Track your progress with charts and see trends over time.",
+      title: "Advanced Analytics",
+      icon: <FaChartLine className="w-10 h-10 text-red-500 mb-4" />,
+      description:
+        "Understand your progress with in-depth habit analytics and personalized trends.",
     },
   ];
 
   return (
-    <div className="flex flex-col bg-gray-200 dark:bg-gray-900 text-gray-900 dark:text-white overflow-x-hidden scroll-smooth">
-      {/* Home Section */}
-      <section
-        id="home"
-        className="relative w-full min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-24 overflow-hidden"
-      >
-        {/* Floating shapes */}
-        <div className="absolute -top-24 -left-24 w-72 h-72 bg-red-100 rounded-full opacity-20 animate-blob"></div>
-
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-            Are you still <span className="text-red-500">planning</span>{" "}
-            <span className="inline-block text-red-500 animate-float text-6xl font-bold">?</span>
+    <div className="overflow-x-hidden">
+      {/* ---------- HERO SECTION ---------- */}
+      <section className="relative flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-8 md:px-12 py-24">
+        {/* Text */}
+        <div className="flex-1 text-center md:text-left space-y-8">
+          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
+            Build Better{" "}
+            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-transparent bg-clip-text">
+              Habits
+            </span>{" "}
+            Every Day
           </h1>
-
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
-            Build your <span className="text-red-500">habits</span> with Streako
-          </h2>
-
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto">
-            Small steps. Daily progress. Lasting change.
+          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto md:mx-0 leading-relaxed">
+            Turn consistency into success with <span className="font-semibold text-red-500">Streako</span> — track your daily habits and grow one streak at a time.
           </p>
-
-          <button
-            onClick={() => navigate("/home/signup")}
-            className="px-10 py-4 bg-black dark:bg-white text-white dark:text-black text-lg font-semibold rounded-2xl shadow-md hover:scale-105 transition-transform"
-          >
-            Get Started
-          </button>
+          <div className="pt-4">
+            <button
+              onClick={() => navigate("/home/signup")}
+              className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black text-lg font-semibold rounded-2xl shadow-md hover:scale-105 transition-transform"
+            >
+              Get Started
+            </button>
+          </div>
         </div>
 
-        {/* Dashboard Preview */}
-        <div className="relative z-10 w-full md:w-[600px] mt-16 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold mb-4">Today’s Progress</h3>
-
-          <div className="flex justify-between items-center bg-gray-100 dark:bg-gray-700 rounded-xl p-4 mb-4">
-            <div>
-              <p className="text-2xl font-bold">5</p>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Days in a row</p>
-            </div>
-            <div className="bg-black dark:bg-white text-white dark:text-black px-3 py-1 rounded-lg text-sm font-semibold">
-              +1
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span>Read 20 pages</span>
-              <span>✅</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Meditate 10 min</span>
-              <span>❌</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Exercise 30 min</span>
-              <span>✅</span>
-            </div>
-          </div>
+        {/* Hero Image */}
+        <div className="flex-1 flex justify-center mb-12 md:mb-0">
+          <img
+            src="/developer_activity.svg"
+            alt="Developer working"
+            className="w-[85%] max-w-[520px] drop-shadow-lg animate-float"
+          />
         </div>
       </section>
 
-      {/* About Section */}
-      <section
-        id="about"
-        className="relative w-full flex flex-col items-center text-center py-24 px-6"
-      >
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold mb-6">Why Streako?</h2>
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
-            Streako helps you track your daily habits, stay consistent, and build routines that stick.
-            With visual progress tracking, streaks, and gentle reminders, you can focus on what matters most.
-          </p>
-        </div>
+      {/* ---------- ABOUT SECTION ---------- */}
+      <section className="py-24 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 text-center">
+        <h2 className="text-4xl font-bold mb-6">Why Choose Streako?</h2>
+        <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          Streako isn’t just a tracker — it’s your companion in building a better version of yourself.
+          Every checkmark is a step closer to your goals.
+        </p>
       </section>
 
-      {/* Features Section */}
-      <section
-        id="features"
-        className="relative w-full py-24 px-6 bg-gray-100 dark:bg-gray-900"
-      >
+      {/* ---------- FEATURES SECTION ---------- */}
+      <section className="py-24 px-6 md:px-20 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 text-center"
+              className="p-10 bg-white dark:bg-gray-800 rounded-3xl shadow-md hover:shadow-2xl hover:scale-105 transition-all duration-300 text-center border border-gray-100 dark:border-gray-700"
             >
               {feature.icon}
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
               <p className="text-gray-700 dark:text-gray-300">{feature.description}</p>
             </div>
           ))}
         </div>
+      </section>
 
-        <div className="text-center mt-16">
+      {/* ---------- CTA SECTION ---------- */}
+      <section className="flex flex-col md:flex-row items-center justify-between py-24 px-6 md:px-20 max-w-7xl mx-auto">
+        <div className="flex-1 flex justify-center mb-12 md:mb-0 order-2 md:order-1">
+          <img
+            src="/stepping_up.svg"
+            alt="Growth journey"
+            className="w-[85%] max-w-[500px] drop-shadow-lg animate-float"
+          />
+        </div>
+
+        <div className="flex-1 text-center md:text-left space-y-6 order-1 md:order-2">
+          <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+            Every Step <span className="text-red-500">Counts</span>
+          </h2>
+          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto md:mx-0">
+            You don’t need to be perfect — just consistent. Start your journey with Streako today.
+          </p>
           <button
             onClick={() => navigate("/home/user")}
-            className="px-10 py-4 bg-black dark:bg-gray-800 text-white text-lg font-semibold rounded-2xl shadow-md hover:opacity-90 transition"
+            className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black text-lg font-semibold rounded-2xl shadow-md hover:scale-105 transition-transform"
           >
-            Start Building Your Streak
+            Start Your Streak
           </button>
         </div>
       </section>
@@ -131,3 +116,4 @@ function Home() {
 }
 
 export default Home;
+

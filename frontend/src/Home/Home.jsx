@@ -1,12 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { FaChartLine, FaBell, FaFire } from "react-icons/fa";
 import developer_activity from "../assets/activity.svg"
-import stepping_up from "../assets/progress.svg"
-import climbingAnimation from "../assets/climb.json";
-import Lottie from "lottie-react";;
+import stepping from "../assets/climb.json";
+import Lottie from "lottie-react";
+import { Context } from "../context/Context.jsx";
+import { useContext } from "react";
 
 function Home() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(Context);
+
+
+  if (isLoggedIn) navigate("/home/user");
 
   const features = [
     {
@@ -60,7 +65,7 @@ function Home() {
           <img
             src={developer_activity}
             alt="Developer working"
-            className="w-[85%] max-w-[520px] drop-shadow-lg animate-float"
+            className="w-[85%] max-w-[520px] drop-shadow-lg"
           />
         </div>
       </section>
@@ -93,9 +98,7 @@ function Home() {
       {/* ---------- CTA SECTION ---------- */}
       <section className="flex flex-col md:flex-row items-center justify-between py-24 px-6 md:px-20 max-w-7xl mx-auto">
         <div className="flex-1 flex justify-center mb-12 md:mb-0 order-2 md:order-1">
-          <Lottie animationData={climbingAnimation} loop={true} 
-            className="w-[85%] max-w-[400px] "
-          />
+          <Lottie animationData={stepping} className="max-w-[420px]" />
         </div>
 
         <div className="flex-1 text-center md:text-left space-y-6 order-1 md:order-2">
@@ -103,7 +106,7 @@ function Home() {
             Every Step <span className="text-red-500">Counts</span>
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto md:mx-0">
-            You don't need to be perfect — just consistent. Start your journey with Streako today.
+            You don’t need to be perfect — just consistent. Start your journey with Streako today.
           </p>
           <button
             onClick={() => navigate("/home/user")}

@@ -4,10 +4,9 @@ import { Context } from "../../context/Context";
 import toast from "react-hot-toast";
 
 function UserHome() {
-  const { user, setUser, setIsLoggedIn } = useContext(Context);
-  const [loading, setLoading] = useState(true);
+  const { user, setUser, isLoggedIn, setIsLoggedIn, loading: contextLoading } = useContext(Context);
 
-  // Habit states
+  const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -19,57 +18,66 @@ function UserHome() {
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
 
-  // Fetch user and habits
+  // -------------------- Fetch habits --------------------
+  const fetchHabits = async () => {
+    try {
+      const res = await fetch("http://localhost:7000/home/habits", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const today = new Date();
+        const enriched = (data.data || []).map((habit) => {
+          const lastEntry = habit.history?.[habit.history.length - 1];
+          const isCompletedToday =
+            lastEntry && isSameDay(new Date(lastEntry.date), today)
+              ? lastEntry.completed
+              : false;
+          return { ...habit, isCompletedToday };
+        });
+        setHabits(enriched);
+      } else {
+        toast.error(data.error || "Failed to fetch habits");
+      }
+    } catch (err) {
+      console.error("Fetch habits error:", err);
+      toast.error("Server error");
+    }
+  };
+
+  // -------------------- Persistent login check --------------------
   useEffect(() => {
-    const fetchUserAndHabits = async () => {
+    const verifyUser = async () => {
       try {
-        const resUser = await fetch("http://localhost:7000/home/user", {
+        const res = await fetch("http://localhost:7000/home/verify", {
           credentials: "include",
         });
-        const dataUser = await resUser.json();
-
-        if (resUser.ok) {
-          setUser(dataUser.data);
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.user);
           setIsLoggedIn(true);
+          await fetchHabits();
         } else {
           setUser(null);
-        }
-
-        const resHabits = await fetch("http://localhost:7000/home/habits", {
-          credentials: "include",
-        });
-        const dataHabits = await resHabits.json();
-
-        if (resHabits.ok) {
-          // Enrich habits with today status
-          const today = new Date();
-          const enriched = (dataHabits.data || []).map((habit) => {
-            const lastEntry = habit.history?.[habit.history.length - 1];
-            const isCompletedToday =
-              lastEntry && isSameDay(new Date(lastEntry.date), today)
-                ? lastEntry.completed
-                : false;
-            return { ...habit, isCompletedToday };
-          });
-          setHabits(enriched);
+          setIsLoggedIn(false);
         }
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error("Persistent login verify error:", err);
         setUser(null);
+        setIsLoggedIn(false);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserAndHabits();
+    verifyUser();
   }, []);
 
-  // Add a new habit
+  // -------------------- Add habit --------------------
   const addHabit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error("Habit title is required");
     setAdding(true);
-
     try {
       const res = await fetch("http://localhost:7000/home/habits/add", {
         method: "POST",
@@ -77,13 +85,9 @@ function UserHome() {
         credentials: "include",
         body: JSON.stringify({ title, description }),
       });
-
       const data = await res.json();
       if (res.ok) {
-        setHabits((prev) => [
-          { ...data.data, isCompletedToday: false },
-          ...prev,
-        ]);
+        setHabits((prev) => [{ ...data.data, isCompletedToday: false }, ...prev]);
         setTitle("");
         setDescription("");
         setIsFormOpen(false);
@@ -99,31 +103,24 @@ function UserHome() {
     }
   };
 
-  // Toggle habit completion for today
+  // -------------------- Toggle completion --------------------
   const toggleHabitCompletion = async (id) => {
     try {
-      const res = await fetch(
-        `http://localhost:7000/home/habits/${id}/toggle`,
-        {
-          method: "PATCH",
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`http://localhost:7000/home/habits/${id}/toggle`, {
+        method: "PATCH",
+        credentials: "include",
+      });
       const data = await res.json();
-
       if (res.ok) {
         const today = new Date();
         setHabits((prev) =>
           prev.map((habit) => {
             if (habit._id === id) {
-              const updatedHabit = data.data;
-              const lastEntry =
-                updatedHabit.history?.[updatedHabit.history.length - 1];
-              const isCompletedToday =
-                lastEntry && isSameDay(new Date(lastEntry.date), today)
-                  ? lastEntry.completed
-                  : false;
-              return { ...updatedHabit, isCompletedToday };
+              const lastEntry = data.data.history?.[data.data.history.length - 1];
+              const isCompletedToday = lastEntry && isSameDay(new Date(lastEntry.date), today)
+                ? lastEntry.completed
+                : false;
+              return { ...data.data, isCompletedToday };
             }
             return habit;
           })
@@ -133,12 +130,13 @@ function UserHome() {
         toast.error(data.error || "Failed to update habit");
       }
     } catch (err) {
-      console.error("Toggle error:", err);
+      console.error("Toggle habit error:", err);
       toast.error("Server error");
     }
   };
 
-  if (loading) {
+  // -------------------- Loading / Access denied --------------------
+  if (loading || contextLoading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <Loader2 className="w-8 h-8 text-red-500 animate-spin mr-3" />
@@ -149,7 +147,7 @@ function UserHome() {
     );
   }
 
-  if (!user) {
+  if (!isLoggedIn || !user) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-8 text-center">
         <h1 className="text-4xl font-extrabold text-red-600 dark:text-red-400 mb-4">
@@ -164,13 +162,14 @@ function UserHome() {
 
   const isNewUser = habits.length === 0;
 
+  // -------------------- Main JSX --------------------
   return (
     <div className="min-h-[calc(100vh-64px)] pt-24 pb-12 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6">
         {/* Welcome Section */}
         <header className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">
-            Welcome {" "}
+            Welcome{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-pink-500">
               {user.name}
             </span>
@@ -244,8 +243,7 @@ function UserHome() {
               Get Started! Define Your First Goal
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Click <strong>Add New Habit</strong> above to start tracking your
-              first streak.
+              Click <strong>Add New Habit</strong> above to start tracking your streak.
             </p>
           </div>
         ) : (
@@ -268,9 +266,7 @@ function UserHome() {
                       ? "bg-green-500 text-white hover:bg-green-600"
                       : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                       }`}
-                    title={
-                      habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"
-                    }
+                    title={habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"}
                   >
                     {habit.isCompletedToday ? (
                       <CheckCircle className="w-5 h-5" />
@@ -309,3 +305,4 @@ function UserHome() {
 }
 
 export default UserHome;
+

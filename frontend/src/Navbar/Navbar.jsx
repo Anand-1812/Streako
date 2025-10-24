@@ -3,6 +3,7 @@ import { Menu, X, Sun, Moon, LogOut } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import MobileMenu from "./MobileMenu";
 import { Context } from "../context/Context";
+import toast from "react-hot-toast";
 
 export default function Navbar({ menuOpen, setMenuOpen }) {
   const [darkMode, setDarkMode] = useState(false);
@@ -32,11 +33,12 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (logoutUser) {
-      logoutUser();
+      await logoutUser(); // call the context logout
+      setIsProfileOpen(false);
+      navigate("/home"); // redirect to home
     }
-    navigate("/home/login");
   };
 
   const handleActionClick = () => {
@@ -92,6 +94,17 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
                 <li>
                   <button
                     onClick={() => {
+                      navigate("/home/user");
+                      setIsProfileOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-2"
+                  >
+                    Habits
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
                       navigate("/home/user/dashboard");
                       setIsProfileOpen(false);
                     }}
@@ -102,10 +115,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
                 </li>
                 <li>
                   <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsProfileOpen(false);
-                    }}
+                    onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2 text-sm"
                   >
                     <LogOut className="w-4 h-4" />

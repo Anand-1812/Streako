@@ -30,19 +30,22 @@ function Dashboard() {
   useEffect(() => {
     const fetchUserAndHabits = async () => {
       try {
-        const resUser = await fetch("http://localhost:7000/home/user", {
+        // Fetch user
+        const resUser = await fetch("http://localhost:7000/home/verify", {
           credentials: "include",
         });
         const dataUser = await resUser.json();
 
         if (resUser.ok) {
-          setUser(dataUser.data);
+          setUser(dataUser.user);
           setIsLoggedIn(true);
         } else {
           setUser(null);
           navigate("/home/login");
+          return;
         }
 
+        // Fetch habits
         const resHabits = await fetch("http://localhost:7000/home/habits", {
           credentials: "include",
         });
@@ -59,10 +62,13 @@ function Dashboard() {
             return { ...habit, isCompletedToday };
           });
           setHabits(enriched);
+        } else {
+          toast.error(dataHabits.error || "Failed to fetch habits");
         }
       } catch (err) {
         console.error("Fetch error:", err);
         setUser(null);
+        navigate("/home/login");
       } finally {
         setLoading(false);
       }
@@ -169,7 +175,7 @@ function Dashboard() {
 
   const today = new Date();
   const startDate = new Date();
-  startDate.setMonth(today.getMonth() - 6); // last 6 months
+  startDate.setMonth(today.getMonth() - 6);
 
   return (
     <section className="relative w-full min-h-[calc(100vh-64px)] flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-x-hidden">

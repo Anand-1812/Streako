@@ -20,9 +20,9 @@ const ContextProvider = ({ children }) => {
         if (res.ok) {
           setUser(data.user);
           setIsLoggedIn(true);
+          toast.success("logged out sucssefully")
         } else {
-          setUser(null);
-          setIsLoggedIn(false);
+          toast.err("logged failed")
         }
       } catch (err) {
         console.error("Persistent login verify error:", err);
@@ -47,13 +47,11 @@ const ContextProvider = ({ children }) => {
       if (res.ok) {
         setUser(null);
         setIsLoggedIn(false);
-        toast.success("Logged out successfully!");
       } else {
         toast.error("Logout failed!");
       }
     } catch (err) {
       console.error("Logout error:", err);
-      toast.error("Server error");
     }
   };
 

@@ -1,15 +1,14 @@
-import { StrictMode, useState } from 'react'
-import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
 import Home from './Home/Home.jsx'
 import About from './About/About.jsx'
-import Dashboard from "./components/Dashboard/Dashboard.jsx"
-import Signup from './components/Signup/Signup.jsx'
-import UserHome from './components/Users/UserHome.jsx'
+import { createRoot } from 'react-dom/client'
 import Login from './components/Login/Login.jsx'
 import ContextProvider from './context/Context.jsx'
+import Signup from './components/Signup/Signup.jsx'
+import UserHome from './components/Users/UserHome.jsx'
+import Dashboard from "./components/Dashboard/Dashboard.jsx"
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
 
 const router = createBrowserRouter(
   [

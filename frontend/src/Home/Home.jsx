@@ -1,18 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import { FaChartLine, FaBell, FaFire } from "react-icons/fa";
-import developer_activity from "../assets/activity.svg"
-import stepping from "../assets/climb.json";
 import Lottie from "lottie-react";
-import { Context } from "../context/Context.jsx";
 import { useContext } from "react";
+import stepping from "../assets/climb.json";
+import { useNavigate } from "react-router-dom";
+import { Context } from "../context/Context.jsx";
+import developer_activity from "../assets/activity.svg"
+import { FaChartLine, FaBell, FaFire } from "react-icons/fa";
 
 function Home() {
   const navigate = useNavigate();
   const { isLoggedIn } = useContext(Context);
 
-
+  // if the user is logged in, redirect to habits page
   if (isLoggedIn) navigate("/home/user");
 
+  // features section data
   const features = [
     {
       title: "Track Streaks",
@@ -36,9 +37,8 @@ function Home() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* ---------- HERO SECTION ---------- */}
+      { /*  Hero Section */ }
       <section className="relative flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-8 md:px-12 py-24">
-        {/* Text */}
         <div className="flex-1 text-center md:text-left space-y-8">
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
             Build Better{" "}
@@ -60,7 +60,7 @@ function Home() {
           </div>
         </div>
 
-        {/* Hero Image */}
+        {/* Hero section image */}
         <div className="flex-1 flex justify-center mb-12 md:mb-0">
           <img
             src={developer_activity}
@@ -70,7 +70,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ---------- ABOUT SECTION ---------- */}
+      {/* ABOUT SECTION */}
       <section className="py-24 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 text-center">
         <h2 className="text-4xl font-bold mb-6">Why Choose Streako?</h2>
         <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -79,7 +79,7 @@ function Home() {
         </p>
       </section>
 
-      {/* ---------- FEATURES SECTION ---------- */}
+      {/* FEATURES SECTION */}
       <section className="py-24 px-6 md:px-20 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
           {features.map((feature) => (
@@ -95,7 +95,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ---------- CTA SECTION ---------- */}
+      {/* Points section */}
       <section className="flex flex-col md:flex-row items-center justify-between py-24 px-6 md:px-20 max-w-7xl mx-auto">
         <div className="flex-1 flex justify-center mb-12 md:mb-0 order-2 md:order-1">
           <Lottie animationData={stepping} className="max-w-[420px]" />

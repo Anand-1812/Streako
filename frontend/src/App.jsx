@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import Footer from "./Footer/Footer";
+import { useState, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);

@@ -1,9 +1,8 @@
-import { useState, useEffect, useContext } from "react";
-import { Menu, X, Sun, Moon, LogOut } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
 import MobileMenu from "./MobileMenu";
 import { Context } from "../context/Context";
-import toast from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Menu, X, Sun, Moon, LogOut } from "lucide-react";
 
 export default function Navbar({ menuOpen, setMenuOpen }) {
   const [darkMode, setDarkMode] = useState(false);
@@ -35,9 +34,9 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
   const handleLogout = async () => {
     if (logoutUser) {
-      await logoutUser(); // call the context logout
+      await logoutUser(); // logout from context
       setIsProfileOpen(false);
-      navigate("/home"); // redirect to home
+      navigate("/home"); // home redirect
     }
   };
 

@@ -1,3 +1,7 @@
+import toast from "react-hot-toast";
+import HeatMap from "@uiw/react-heat-map";
+import { useNavigate } from "react-router-dom";
+import { Context } from "../../context/Context";
 import { useEffect, useState, useContext } from "react";
 import { Calendar, Trophy, CheckCircle2 } from "lucide-react";
 import {
@@ -11,16 +15,15 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { Context } from "../../context/Context";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import HeatMap from "@uiw/react-heat-map";
 
 function Dashboard() {
   const { user, setUser, setIsLoggedIn } = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
   const navigate = useNavigate();
+
+  // url from .env
+  const apiUrl = import.meta.env.VITE_API_URL
 
   const isSameDay = (d1, d2) =>
     d1.getFullYear() === d2.getFullYear() &&
@@ -31,7 +34,7 @@ function Dashboard() {
     const fetchUserAndHabits = async () => {
       try {
         // Fetch user
-        const resUser = await fetch("http://localhost:7000/home/verify", {
+        const resUser = await fetch(`${apiUrl}/home/verify`, {
           credentials: "include",
         });
         const dataUser = await resUser.json();
@@ -46,7 +49,7 @@ function Dashboard() {
         }
 
         // Fetch habits
-        const resHabits = await fetch("http://localhost:7000/home/habits", {
+        const resHabits = await fetch(`${apiUrl}/home/habits`, {
           credentials: "include",
         });
         const dataHabits = await resHabits.json();
@@ -78,7 +81,7 @@ function Dashboard() {
 
   const toggleHabit = async (id) => {
     try {
-      const res = await fetch(`http://localhost:7000/home/habits/${id}/toggle`, {
+      const res = await fetch(`${apiUrl}/home/habits/${id}/toggle`, {
         method: "PATCH",
         credentials: "include",
       });

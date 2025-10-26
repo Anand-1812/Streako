@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Login() {
+
+  // url form .env
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [userData, setUserData] = useState({
     email: "",
     password: ""
@@ -23,7 +27,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:7000/home/login", {
+      const response = await fetch(`${apiUrl}/home/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

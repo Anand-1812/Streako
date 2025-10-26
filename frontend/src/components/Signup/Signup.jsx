@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Signup() {
+
+  // url from .env
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -24,7 +28,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("http://localhost:7000/home/signup", {
+      const response = await fetch(`${apiUrl}/home/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // important for cookies (JWT)

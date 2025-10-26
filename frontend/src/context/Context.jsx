@@ -1,9 +1,13 @@
-import { createContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { createContext, useState, useEffect } from "react";
 
 export const Context = createContext();
 
 const ContextProvider = ({ children }) => {
+
+  // url from .env
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -12,7 +16,7 @@ const ContextProvider = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await fetch("http://localhost:7000/home/verify", {
+        const res = await fetch(`${apiUrl}/home/verify`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -36,10 +40,10 @@ const ContextProvider = ({ children }) => {
     verifyUser();
   }, []);
 
-  // ---- Add logout function ----
+  // logout user
   const logoutUser = async () => {
     try {
-      const res = await fetch("http://localhost:7000/home/logout", {
+      const res = await fetch(`${apiUrl}/home/logout`, {
         method: "POST",
         credentials: "include",
       });

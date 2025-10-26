@@ -1,11 +1,17 @@
-import { useContext, useEffect, useState } from "react";
-import { Loader2, PlusCircle, CheckCircle } from "lucide-react";
-import { Context } from "../../context/Context";
 import toast from "react-hot-toast";
+import { Context } from "../../context/Context";
+import { useContext, useEffect, useState } from "react";
+import { Loader2, PlusCircle, CheckCircle, Trash } from "lucide-react";
 
 function UserHome() {
+
+  // url from .env
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  // global context
   const { user, setUser, isLoggedIn, setIsLoggedIn, loading: contextLoading } = useContext(Context);
 
+  // necessary states
   const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
   const [title, setTitle] = useState("");
@@ -18,10 +24,10 @@ function UserHome() {
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
 
-  // -------------------- Fetch habits --------------------
+  // fetch user habits
   const fetchHabits = async () => {
     try {
-      const res = await fetch("http://localhost:7000/home/habits", {
+      const res = await fetch(`${apiUrl}/home/habits`, {
         credentials: "include",
       });
       const data = await res.json();
@@ -45,11 +51,11 @@ function UserHome() {
     }
   };
 
-  // -------------------- Persistent login check --------------------
+  // for persistent login
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await fetch("http://localhost:7000/home/verify", {
+        const res = await fetch(`${apiUrl}/home/verify`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -73,13 +79,13 @@ function UserHome() {
     verifyUser();
   }, []);
 
-  // -------------------- Add habit --------------------
+  // add user habit
   const addHabit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error("Habit title is required");
     setAdding(true);
     try {
-      const res = await fetch("http://localhost:7000/home/habits/add", {
+      const res = await fetch(`${apiUrl}/home/habits/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -103,10 +109,9 @@ function UserHome() {
     }
   };
 
-  // -------------------- Toggle completion --------------------
   const toggleHabitCompletion = async (id) => {
     try {
-      const res = await fetch(`http://localhost:7000/home/habits/${id}/toggle`, {
+      const res = await fetch(`${apiUrl}/home/habits/${id}/toggle`, {
         method: "PATCH",
         credentials: "include",
       });
@@ -135,7 +140,7 @@ function UserHome() {
     }
   };
 
-  // -------------------- Loading / Access denied --------------------
+  // loading screen || access denied
   if (loading || contextLoading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -162,7 +167,7 @@ function UserHome() {
 
   const isNewUser = habits.length === 0;
 
-  // -------------------- Main JSX --------------------
+  // user habit page starts here
   return (
     <div className="min-h-[calc(100vh-64px)] pt-24 pb-12 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6">
@@ -260,20 +265,25 @@ function UserHome() {
                   <h3 className="font-bold text-xl text-gray-900 dark:text-white">
                     {habit.title}
                   </h3>
-                  <button
-                    onClick={() => toggleHabitCompletion(habit._id)}
-                    className={`p-1.5 rounded-full transition-colors duration-200 ${habit.isCompletedToday
-                      ? "bg-green-500 text-white hover:bg-green-600"
-                      : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-                      }`}
-                    title={habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"}
-                  >
-                    {habit.isCompletedToday ? (
-                      <CheckCircle className="w-5 h-5" />
-                    ) : (
-                      <PlusCircle className="w-5 h-5" />
-                    )}
-                  </button>
+                  <div className="flex gap-2">
+                    <button className="p-1.5 rounded-full transition-colors text-red-500 duration-200 hover:bg-red-500 hover:text-white">
+                      <Trash className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => toggleHabitCompletion(habit._id)}
+                      className={`p-1.5 rounded-full transition-colors duration-200 ${habit.isCompletedToday
+                        ? "bg-green-500 text-white hover:bg-green-600"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                        }`}
+                      title={habit.isCompletedToday ? "Mark Incomplete" : "Mark Complete"}
+                    >
+                      {habit.isCompletedToday ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : (
+                        <PlusCircle className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {habit.description && (

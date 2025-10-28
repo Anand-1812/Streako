@@ -15,7 +15,7 @@ dotenv.config({
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, "http://localhost:5174"],
+  origin: [process.env.FRONTEND_URL, "http://localhost:5174", "https://streako-backend.onrender.com"],
   credentials: true,
 }));
 app.use(cookieParser());

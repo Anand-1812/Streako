@@ -100,7 +100,7 @@ userRouter.post("/login", async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (error) {
-    console.error("Login Error:", error);
+    console.error("Login Error:", error.message, error.stack);
     res.status(500).json({ error: "Internal server error" });
   }
 });

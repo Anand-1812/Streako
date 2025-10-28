@@ -4,15 +4,13 @@ import { createContext, useState, useEffect } from "react";
 export const Context = createContext();
 
 const ContextProvider = ({ children }) => {
-
-  // url from .env
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Persistent login
+  // ✅ Persistent login
   useEffect(() => {
     const verifyUser = async () => {
       try {
@@ -24,9 +22,12 @@ const ContextProvider = ({ children }) => {
         if (res.ok) {
           setUser(data.user);
           setIsLoggedIn(true);
-          toast.success("logged out sucssefully")
+          // optional toast (you can remove this to avoid repeated popups)
+          console.log("✅ User verified successfully:", data.user);
         } else {
-          toast.err("logged failed")
+          setUser(null);
+          setIsLoggedIn(false);
+          toast.error("Login verification failed");
         }
       } catch (err) {
         console.error("Persistent login verify error:", err);
@@ -38,9 +39,9 @@ const ContextProvider = ({ children }) => {
     };
 
     verifyUser();
-  }, []);
+  }, [apiUrl]);
 
-  // logout user
+  // ✅ Logout
   const logoutUser = async () => {
     try {
       const res = await fetch(`${apiUrl}/home/logout`, {
@@ -51,11 +52,13 @@ const ContextProvider = ({ children }) => {
       if (res.ok) {
         setUser(null);
         setIsLoggedIn(false);
+        toast.success("Logged out successfully");
       } else {
         toast.error("Logout failed!");
       }
     } catch (err) {
       console.error("Logout error:", err);
+      toast.error("An error occurred during logout");
     }
   };
 
@@ -68,7 +71,7 @@ const ContextProvider = ({ children }) => {
         setIsLoggedIn,
         loading,
         setLoading,
-        logoutUser
+        logoutUser,
       }}
     >
       {children}

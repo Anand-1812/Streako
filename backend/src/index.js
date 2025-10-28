@@ -30,11 +30,12 @@ app.use('/home', habitRouter)
 const PORT = process.env.APP_PORT || 7123
 
 connectDB().then(() => {
+  console.log("MongoDB connection success")
   app.listen(PORT, () => {
     console.log(`Server running on port: ${PORT}`);
   });
 }).catch((err) => {
-  console.error("Failed to connect to MongoDB:", err);
+  console.error("Failed to connect to MongoDB:", err.message);
 });
 
 

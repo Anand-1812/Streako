@@ -1,6 +1,6 @@
 # Streako
 
-Live preview: <a href="https://streako-tracker.vercel.app"></a>
+Live preview: <a href="https://streako-tracker.vercel.app">Streako</a>
 
 # Not you usual habit tracker
 

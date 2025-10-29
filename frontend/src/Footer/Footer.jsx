@@ -12,16 +12,6 @@ function Footer() {
         {/* Center: Social Icons */}
         <div className="flex items-center gap-4">
           <a
-            href="https://twitter.com/anand_kumar1812"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300
-              hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white
-              transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-sm"
-          >
-            <FaTwitter className="w-5 h-5" />
-          </a>
-          <a
             href="https://github.com/anand-1812"
             target="_blank"
             rel="noopener noreferrer"

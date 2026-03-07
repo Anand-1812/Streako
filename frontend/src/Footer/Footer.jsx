@@ -24,7 +24,7 @@ function Footer() {
             About
           </NavLink>
           <NavLink
-            to="/home/signup"
+            to="/signup"
             className="transition hover:text-stone-950 dark:hover:text-white"
           >
             Get started

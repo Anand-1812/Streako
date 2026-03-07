@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { ArrowRight, LoaderCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import AuthLayout from "../Auth/AuthLayout.jsx";
+import { Context } from "../../context/context.js";
 
 function Signup() {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { isLoggedIn, user, setIsLoggedIn, setUser } = useContext(Context);
   const [submitting, setSubmitting] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
@@ -14,6 +16,10 @@ function Signup() {
   });
 
   const navigate = useNavigate();
+
+  if (isLoggedIn && user) {
+    return <Navigate to="/app/habits" replace />;
+  }
 
   const handleChange = (event) => {
     setUserData({ ...userData, [event.target.name]: event.target.value });
@@ -40,8 +46,10 @@ function Signup() {
       const data = await response.json();
 
       if (response.ok) {
+        setUser(data.user);
+        setIsLoggedIn(true);
         toast.success("Signup successful");
-        navigate("/home/user");
+        navigate("/app/habits");
       } else {
         toast.error(data.error || "Signup failed");
       }
@@ -62,7 +70,7 @@ function Signup() {
       formHint="Create an account to unlock your habit list, streak history, and dashboard."
       alternateQuestion="Already have an account?"
       alternateLabel="Log in"
-      alternateTo="/home/login"
+      alternateTo="/login"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>

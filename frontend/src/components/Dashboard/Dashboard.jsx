@@ -3,7 +3,7 @@ import HeatMap from "@uiw/react-heat-map";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../context/context.js";
 import { useEffect, useState, useContext } from "react";
-import { Calendar, Trophy, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Calendar, CheckCircle2, Flame, Loader2 } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -15,273 +15,282 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-
-const isSameDay = (d1, d2) =>
-  d1.getFullYear() === d2.getFullYear() &&
-  d1.getMonth() === d2.getMonth() &&
-  d1.getDate() === d2.getDate();
+import { buildHeatMapData, enrichHabits } from "../../utils/habits.js";
 
 function Dashboard() {
-  const { user, setUser, setIsLoggedIn } = useContext(Context);
+  const { user, isLoggedIn, loading: contextLoading } = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
   const navigate = useNavigate();
-
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const fetchUserAndHabits = async () => {
+    if (!isLoggedIn) return undefined;
+
+    const fetchHabits = async () => {
+      setLoading(true);
+
       try {
-        // Fetch user
-        const resUser = await fetch(`${apiUrl}/home/verify`, {
+        const res = await fetch(`${apiUrl}/home/habits`, {
           credentials: "include",
         });
-        const dataUser = await resUser.json();
+        const data = await res.json();
 
-        if (resUser.ok) {
-          setUser(dataUser.user);
-          setIsLoggedIn(true);
+        if (res.ok) {
+          setHabits(enrichHabits(data.data));
         } else {
-          setUser(null);
-          navigate("/home/login");
-          return;
-        }
-
-        // Fetch habits
-        const resHabits = await fetch(`${apiUrl}/home/habits`, {
-          credentials: "include",
-        });
-        const dataHabits = await resHabits.json();
-
-        if (resHabits.ok) {
-          const today = new Date();
-          const enriched = (dataHabits.data || []).map((habit) => {
-            const lastEntry = habit.history?.[habit.history.length - 1];
-            const isCompletedToday =
-              lastEntry && isSameDay(new Date(lastEntry.date), today)
-                ? lastEntry.completed
-                : false;
-            return { ...habit, isCompletedToday };
-          });
-          setHabits(enriched);
-        } else {
-          toast.error(dataHabits.error || "Failed to fetch habits");
+          toast.error(data.error || "Failed to fetch habits");
         }
       } catch (err) {
-        console.error("Fetch error:", err);
-        setUser(null);
-        navigate("/home/login");
+        console.error("Fetch habits error:", err);
+        toast.error("Server error");
       } finally {
         setLoading(false);
       }
     };
-    fetchUserAndHabits();
-  }, [apiUrl, navigate, setIsLoggedIn, setUser]);
 
-  if (loading) {
+    fetchHabits();
+    return undefined;
+  }, [apiUrl, isLoggedIn]);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(root.classList.contains("dark"));
+    });
+
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  if (loading || contextLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <p className="text-xl text-gray-600 dark:text-gray-300">Loading...</p>
+      <div className="flex min-h-[calc(100vh-6rem)] items-center justify-center px-6">
+        <div className="inline-flex items-center gap-3 rounded-full border border-stone-200 bg-white/85 px-5 py-3 text-sm font-semibold text-stone-700 shadow-[0_20px_50px_-35px_rgba(32,22,14,0.35)] dark:border-white/10 dark:bg-white/5 dark:text-stone-200">
+          <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
+          Loading your insights
+        </div>
       </div>
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <h1 className="text-3xl font-bold text-red-600 dark:text-red-400 mb-2">
-          Access Denied 🔒
-        </h1>
-        <p className="text-gray-700 dark:text-gray-300">
-          Please log in to view your dashboard.
-        </p>
-      </div>
-    );
-  }
+  if (!isLoggedIn || !user) return null;
 
-  // --- Metrics ---
-  const completedToday = habits.filter((h) => h.isCompletedToday).length;
+  const completedToday = habits.filter((habit) => habit.isCompletedToday).length;
   const totalHabits = habits.length;
-  const totalStreaks = habits.reduce((acc, h) => acc + (h.streak || 0), 0);
+  const completionRate = totalHabits ? Math.round((completedToday / totalHabits) * 100) : 0;
+  const bestStreak = habits.reduce((best, habit) => Math.max(best, habit.streak || 0), 0);
 
-  // HeatMap data
-  const heatMapData = habits.flatMap((habit) =>
-    habit.history?.map((entry) => ({
-      date: entry.date,
-      count: entry.completed ? 1 : 0,
-    })) || []
-  );
-
-  const mockMetrics = [
-    {
-      label: "Habits Today",
-      value: `${completedToday}/${totalHabits}`,
-      icon: <Calendar className="text-blue-600 dark:text-blue-400" />,
-    },
-    {
-      label: "Total Streaks",
-      value: totalStreaks,
-      icon: <Trophy className="text-yellow-500" />,
-    },
-    {
-      label: "Completed Habits",
-      value: completedToday,
-      icon: <CheckCircle2 className="text-green-500" />,
-    },
-  ];
-
+  const heatMapData = buildHeatMapData(habits);
   const lineData = habits.map((habit) => ({
     name: habit.title,
     streak: habit.streak || 0,
   }));
-
   const barData = habits.map((habit) => ({
     name: habit.title,
-    completed: habit.isCompletedToday ? 1 : 0,
+    completed: habit.history?.filter((entry) => entry.completed).length || 0,
   }));
 
   const today = new Date();
   const startDate = new Date();
   startDate.setMonth(today.getMonth() - 6);
 
-  return (
-    <section className="relative w-full min-h-[calc(100vh-64px)] flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-6 py-24 overflow-x-hidden">
-      <div className="w-full max-w-6xl flex flex-col gap-12 relative z-10">
-        {/* Welcome */}
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl text-center transition-all duration-300">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Welcome back,{" "}
-            <span className="text-red-400 dark:text-red-400">{user.name}</span>!
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 mt-3">
-            Here's your progress overview:
-          </p>
-        </div>
+  const axisColor = isDarkMode ? "#d6d3d1" : "#57534e";
+  const gridColor = isDarkMode ? "rgba(255,255,255,0.12)" : "rgba(87,83,78,0.12)";
+  const tooltipStyle = {
+    backgroundColor: isDarkMode ? "#17110b" : "#fff8f2",
+    borderRadius: "16px",
+    border: "1px solid rgba(120,113,108,0.18)",
+    color: isDarkMode ? "#fff7ef" : "#221912",
+  };
 
-        {/* Metrics */}
-        <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
-          {mockMetrics.map((metric) => (
-            <div
-              key={metric.label}
-              className="flex-1 flex items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300"
+  return (
+    <section className="px-6 pb-16">
+      <div className="mx-auto max-w-7xl">
+        <header className="flex flex-col gap-6 border-b border-stone-200/70 pb-8 dark:border-white/10 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-600 dark:text-orange-300">
+              Insights
+            </p>
+            <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight text-stone-950 md:text-5xl dark:text-white">
+              A clearer view of your progress, {user.name}.
+            </h1>
+            <p className="mt-4 text-lg leading-8 text-stone-600 dark:text-stone-300">
+              Keep the dashboard readable enough to guide the next day, not distract from it.
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate("/app/habits")}
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-200 bg-white/80 px-5 py-3 text-sm font-semibold text-stone-700 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-stone-200 dark:hover:bg-white/10"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to habits
+          </button>
+        </header>
+
+        {totalHabits === 0 ? (
+          <div className="mt-8 rounded-[1.9rem] border border-dashed border-stone-300 bg-white/70 p-10 text-center dark:border-white/15 dark:bg-white/5">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-300">
+              <Flame className="h-6 w-6" />
+            </div>
+            <h2 className="mt-5 text-3xl font-semibold text-stone-950 dark:text-white">
+              No data yet.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-stone-600 dark:text-stone-300">
+              Add a few habits first, then come back here to review streaks, completions, and recent rhythm.
+            </p>
+            <button
+              onClick={() => navigate("/app/habits")}
+              className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200"
             >
-              <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-full">
-                {metric.icon}
+              Go to habits
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  label: "Habits today",
+                  value: `${completedToday}/${totalHabits}`,
+                  detail: "A quick read on today’s workload.",
+                  icon: Calendar,
+                },
+                {
+                  label: "Completion rate",
+                  value: `${completionRate}%`,
+                  detail: "Enough signal to show whether the routine is holding.",
+                  icon: CheckCircle2,
+                },
+                {
+                  label: "Best streak",
+                  value: bestStreak,
+                  detail: "Your strongest run so far.",
+                  icon: Flame,
+                },
+              ].map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={item.label}
+                    className="rounded-[1.6rem] border border-stone-200/70 bg-white/80 p-5 shadow-[0_24px_70px_-55px_rgba(32,22,14,0.35)] dark:border-white/10 dark:bg-white/5"
+                  >
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-300">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <p className="mt-5 text-sm font-semibold uppercase tracking-[0.22em] text-stone-500 dark:text-stone-400">
+                      {item.label}
+                    </p>
+                    <p className="mt-3 text-3xl font-semibold text-stone-950 dark:text-white">
+                      {item.value}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-300">
+                      {item.detail}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 grid gap-5 xl:grid-cols-2">
+              <div className="rounded-[1.75rem] border border-stone-200/70 bg-white/80 p-6 shadow-[0_28px_80px_-55px_rgba(32,22,14,0.35)] dark:border-white/10 dark:bg-white/5">
+                <h2 className="text-xl font-semibold text-stone-950 dark:text-white">
+                  Current streaks
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-300">
+                  A quick comparison of which habits are holding up right now.
+                </p>
+
+                <div className="mt-6 h-[320px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={lineData}>
+                      <CartesianGrid stroke={gridColor} vertical={false} />
+                      <XAxis dataKey="name" stroke={axisColor} tick={{ fill: axisColor, fontSize: 12 }} />
+                      <YAxis
+                        stroke={axisColor}
+                        allowDecimals={false}
+                        tick={{ fill: axisColor, fontSize: 12 }}
+                      />
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Line
+                        type="monotone"
+                        dataKey="streak"
+                        stroke="#f45d22"
+                        strokeWidth={3}
+                        dot={{ r: 4, fill: "#f45d22" }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-              <div>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {metric.value}
+
+              <div className="rounded-[1.75rem] border border-stone-200/70 bg-white/80 p-6 shadow-[0_28px_80px_-55px_rgba(32,22,14,0.35)] dark:border-white/10 dark:bg-white/5">
+                <h2 className="text-xl font-semibold text-stone-950 dark:text-white">
+                  Completed sessions
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-300">
+                  Total completed entries per habit, useful for spotting the most repeated routines.
                 </p>
-                <p className="text-md text-gray-500 dark:text-gray-400">
-                  {metric.label}
-                </p>
+
+                <div className="mt-6 h-[320px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barData} layout="vertical" margin={{ left: 12 }}>
+                      <CartesianGrid stroke={gridColor} horizontal={false} />
+                      <XAxis
+                        type="number"
+                        stroke={axisColor}
+                        allowDecimals={false}
+                        tick={{ fill: axisColor, fontSize: 12 }}
+                      />
+                      <YAxis
+                        type="category"
+                        dataKey="name"
+                        stroke={axisColor}
+                        width={120}
+                        tick={{ fill: axisColor, fontSize: 12 }}
+                      />
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Bar dataKey="completed" fill="#fb923c" radius={[8, 8, 8, 8]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* Charts */}
-        <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
-          {/* Streaks per Habit */}
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
-              Streaks per Habit
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={lineData}>
-                <CartesianGrid stroke="#555" strokeDasharray="5 5" />
-                <XAxis
-                  dataKey="name"
-                  stroke="#aaa"
-                  tick={{ fill: "#ddd", fontSize: 12 }}
-                />
-                <YAxis
-                  stroke="#aaa"
-                  allowDecimals={false}
-                  tick={{ fill: "#ddd", fontSize: 16 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    borderRadius: "8px",
-                    border: "none",
-                    color: "#fff",
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="streak"
-                  stroke="#4f46e5"
-                  strokeWidth={3}
-                  dot={{ r: 5, strokeWidth: 2, fill: "#4f46e5" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+            <div className="mt-8 rounded-[1.75rem] border border-stone-200/70 bg-white/80 p-6 shadow-[0_28px_80px_-55px_rgba(32,22,14,0.35)] dark:border-white/10 dark:bg-white/5">
+              <h2 className="text-xl font-semibold text-stone-950 dark:text-white">
+                Recent contribution graph
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-300">
+                A compact view of how often habits have been completed over the last six months.
+              </p>
 
-          {/* Today's Completion */}
-          <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
-              Today's Habit Completion
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData} layout="vertical">
-                <CartesianGrid stroke="#555" strokeDasharray="5 5" />
-                <XAxis type="number" hide />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  stroke="#aaa"
-                  width={150}
-                  tick={{ fill: "#ddd", fontSize: 16 }}
+              <div className="mt-6 overflow-x-auto pb-2">
+                <HeatMap
+                  value={heatMapData}
+                  startDate={startDate}
+                  endDate={today}
+                  width={980}
+                  rectSize={15}
+                  height={140}
+                  rectProps={{ rx: 3, ry: 3 }}
+                  panelColors={
+                    isDarkMode
+                      ? { 0: "#2b2119", 1: "#5b3a1f", 2: "#a14b1a", 3: "#dd6b20", 4: "#fb923c" }
+                      : { 0: "#f5ede4", 1: "#f7c694", 2: "#fb923c", 3: "#f45d22", 4: "#cf4311" }
+                  }
                 />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    borderRadius: "8px",
-                    border: "none",
-                    color: "#fff",
-                  }}
-                />
-                <Bar dataKey="completed" fill="#4f46e5" radius={[4, 4, 4, 4]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* HeatMap Section */}
-        <div className="w-full bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl transition-shadow duration-300">
-          <h3 className="text-gray-900 dark:text-white font-semibold mb-6 text-xl text-center">
-            Daily Habit Contribution Graph
-          </h3>
-          <div className="flex justify-center overflow-x-auto pb-4">
-            <HeatMap
-              value={heatMapData}
-              startDate={startDate}
-              endDate={today}
-              width={1000}
-              height={150}
-              rectSize={16}
-              rectProps={{
-                rx: 3,
-                ry: 3,
-                stroke: "rgba(0,0,0,0.05)",
-              }}
-              panelColors={{
-                0: "#ebedf0",
-                1: "#9be9a8",
-                2: "#40c463",
-                3: "#30a14e",
-                4: "#216e39",
-                5: "#184b2c",
-              }}
-              style={{
-                color: "#216e39",
-                "--rhm-bg": "rgba(255, 255, 255, 0.05)",
-              }}
-            />
-          </div>
-        </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

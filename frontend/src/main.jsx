@@ -8,6 +8,7 @@ import ContextProvider from "./context/Context.jsx";
 import Signup from "./components/Signup/Signup.jsx";
 import UserHome from "./components/Users/UserHome.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
+import ProtectedRoute from "./components/Routing/ProtectedRoute.jsx";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 const router = createBrowserRouter(
@@ -19,10 +20,21 @@ const router = createBrowserRouter(
         { index: true, element: <Navigate to="/home" replace /> },
         { path: "home", element: <Home /> },
         { path: "about", element: <About /> },
-        { path: "home/signup", element: <Signup /> },
-        { path: "home/login", element: <Login /> },
-        { path: "home/user", element: <UserHome /> },
-        { path: "home/user/dashboard", element: <Dashboard /> },
+        { path: "login", element: <Login /> },
+        { path: "signup", element: <Signup /> },
+        { path: "home/login", element: <Navigate to="/login" replace /> },
+        { path: "home/signup", element: <Navigate to="/signup" replace /> },
+        { path: "home/user", element: <Navigate to="/app/habits" replace /> },
+        { path: "home/user/dashboard", element: <Navigate to="/app/insights" replace /> },
+        {
+          path: "app",
+          element: <ProtectedRoute />,
+          children: [
+            { index: true, element: <Navigate to="habits" replace /> },
+            { path: "habits", element: <UserHome /> },
+            { path: "insights", element: <Dashboard /> },
+          ],
+        },
       ],
     },
   ]

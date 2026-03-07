@@ -44,7 +44,7 @@ export default function MobileMenu({
                 </p>
               </div>
               <NavLink
-                to="/home/user"
+                to="/app/habits"
                 onClick={closeMenu}
                 className="inline-flex items-center justify-center rounded-full bg-stone-900 px-4 py-3 text-sm font-semibold text-white dark:bg-white dark:text-stone-950"
               >
@@ -61,14 +61,14 @@ export default function MobileMenu({
           ) : (
             <>
               <NavLink
-                to="/home/login"
+                to="/login"
                 onClick={closeMenu}
                 className="inline-flex items-center justify-center rounded-full border border-stone-200 px-4 py-3 text-sm font-semibold text-stone-700 dark:border-white/10 dark:text-stone-200"
               >
                 Log in
               </NavLink>
               <NavLink
-                to="/home/signup"
+                to="/signup"
                 onClick={closeMenu}
                 className="inline-flex items-center justify-center rounded-full bg-stone-900 px-4 py-3 text-sm font-semibold text-white dark:bg-white dark:text-stone-950"
               >

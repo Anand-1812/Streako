@@ -21,7 +21,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const links = [
     { name: "Home", path: "/home" },
     { name: "About", path: "/about" },
-    ...(isLoggedIn ? [{ name: "Habits", path: "/home/user" }] : []),
+    ...(isLoggedIn ? [{ name: "Habits", path: "/app/habits" }] : []),
   ];
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
                   <div className="absolute right-0 top-[calc(100%+0.75rem)] w-56 rounded-[1.5rem] border border-stone-200 bg-white/95 p-2 shadow-[0_24px_60px_-35px_rgba(32,22,14,0.45)] dark:border-white/10 dark:bg-stone-950/95">
                     <button
                       onClick={() => {
-                        navigate("/home/user");
+                        navigate("/app/habits");
                         setIsProfileOpen(false);
                       }}
                       className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-stone-700 transition hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-white/5"
@@ -140,7 +140,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
                     </button>
                     <button
                       onClick={() => {
-                        navigate("/home/user/dashboard");
+                        navigate("/app/insights");
                         setIsProfileOpen(false);
                       }}
                       className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-stone-700 transition hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-white/5"
@@ -161,13 +161,13 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
             ) : (
               <>
                 <NavLink
-                  to="/home/login"
+                  to="/login"
                   className="text-sm font-semibold text-stone-700 transition hover:text-stone-950 dark:text-stone-200 dark:hover:text-white"
                 >
                   Log in
                 </NavLink>
                 <button
-                  onClick={() => navigate("/home/signup")}
+                  onClick={() => navigate("/signup")}
                   className="inline-flex items-center justify-center rounded-full bg-stone-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-stone-800 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200"
                 >
                   Get started

@@ -50,7 +50,7 @@ function Home() {
   const { isLoggedIn } = useContext(Context);
 
   if (isLoggedIn) {
-    return <Navigate to="/home/user" replace />;
+    return <Navigate to="/app/habits" replace />;
   }
 
   return (
@@ -73,7 +73,7 @@ function Home() {
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <button
-                onClick={() => navigate("/home/signup")}
+                onClick={() => navigate("/signup")}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-stone-800 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200"
               >
                 Start your streak
@@ -240,14 +240,14 @@ function Home() {
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <button
-                onClick={() => navigate("/home/signup")}
+                onClick={() => navigate("/signup")}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-stone-800 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200"
               >
                 Create an account
                 <ArrowRight className="h-4 w-4" />
               </button>
               <button
-                onClick={() => navigate("/home/login")}
+                onClick={() => navigate("/login")}
                 className="inline-flex items-center justify-center rounded-full border border-stone-200 bg-white/80 px-6 py-3.5 text-base font-semibold text-stone-700 transition hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-stone-200 dark:hover:bg-white/10"
               >
                 Log in

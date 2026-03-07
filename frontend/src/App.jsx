@@ -13,7 +13,7 @@ function App() {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  const isWorkspaceRoute = location.pathname.startsWith("/home/user");
+  const isWorkspaceRoute = location.pathname.startsWith("/app");
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-clip text-stone-900 dark:text-stone-100">

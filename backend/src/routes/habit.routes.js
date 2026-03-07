@@ -59,6 +59,9 @@ habitRouter.patch("/habits/:id/toggle", protect, async (req, res) => {
   try {
     const habit = await Habit.findById(req.params.id);
     if (!habit) return res.status(404).json({ error: "Habit not found" });
+    if (habit.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
 
     const today = new Date();
     const todayEntry = habit.history.find((h) => isSameDay(h.date, today));
@@ -88,6 +91,22 @@ habitRouter.patch("/habits/:id/toggle", protect, async (req, res) => {
     res.status(200).json({ status: "success", data: habit });
   } catch (error) {
     console.error("Error toggling habit:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+habitRouter.delete("/habits/:id", protect, async (req, res) => {
+  try {
+    const habit = await Habit.findById(req.params.id);
+    if (!habit) return res.status(404).json({ error: "Habit not found" });
+    if (habit.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    await habit.deleteOne();
+    res.status(200).json({ status: "success", data: { id: req.params.id } });
+  } catch (error) {
+    console.error("Error deleting habit:", error);
     res.status(500).json({ error: "Server error" });
   }
 });

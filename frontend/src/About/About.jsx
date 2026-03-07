@@ -61,7 +61,7 @@ function About() {
 
         <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
           <NavLink
-            to="/home/signup"
+            to="/signup"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-stone-800 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200"
           >
             Get started

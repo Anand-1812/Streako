@@ -1,156 +1,147 @@
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { NavLink, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { ArrowRight, LoaderCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import AuthLayout from "../Auth/AuthLayout.jsx";
 
 function Signup() {
-
-  // url from .env
   const apiUrl = import.meta.env.VITE_API_URL;
-
+  const [submitting, setSubmitting] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+  const handleChange = (event) => {
+    setUserData({ ...userData, [event.target.name]: event.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (!userData.name || !userData.email || !userData.password) {
       toast.error("Please fill all fields");
       return;
     }
 
+    setSubmitting(true);
+
     try {
       const response = await fetch(`${apiUrl}/home/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // important for cookies (JWT)
-        body: JSON.stringify(userData)
+        credentials: "include",
+        body: JSON.stringify(userData),
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (response.ok) {
         toast.success("Signup successful");
-        setTimeout(() => navigate("/home/user"), 1000);
+        navigate("/home/user");
       } else {
         toast.error(data.error || "Signup failed");
       }
     } catch (error) {
       console.error("Signup error:", error);
       toast.error("Something went wrong");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <Toaster position="top-center" />
-
-      {/* Floating blobs */}
-      <div className="absolute -top-20 -left-20 w-56 h-56 bg-red-100 dark:bg-red-900 rounded-full opacity-20 animate-blob"></div>
-      <div className="absolute -bottom-20 -right-28 w-64 h-64 bg-red-200 dark:bg-red-800 rounded-full opacity-20 animate-blob animation-delay-2000"></div>
-
-      {/* Form card */}
-      <div className="relative flex flex-col md:flex-row z-60 max-w-4xl w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
-        {/* Left - Info Section */}
-        <div
-          className="p-12 flex flex-col justify-center items-start border-r border-gray-600 dark:border-gray-800
-            bg-gradient-to-bl from-gray-600 via-gray-700 to-gray-800 dark:from-gray-700 dark:via-gray-800 dark:to-gray-900"
-        >
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-            Welcome to <br /> <span className="text-red-400 dark:text-red-500">Streako</span>
-          </h2>
-          <p className="text-white text-lg md:text-xl leading-relaxed mt-2">
-            Build your habits.<br />
-            Track your streaks.<br />
-            Stay consistent every day.
-          </p>
+    <AuthLayout
+      eyebrow="Create your account"
+      title="Start a habit system you will actually want to revisit tomorrow."
+      description="Set up your space, begin tracking the routines that matter, and keep progress visible from day one."
+      formHeading="Sign up"
+      formHint="Create an account to unlock your habit list, streak history, and dashboard."
+      alternateQuestion="Already have an account?"
+      alternateLabel="Log in"
+      alternateTo="/home/login"
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div>
+          <label
+            htmlFor="name"
+            className="block text-sm font-semibold text-stone-700 dark:text-stone-200"
+          >
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            required
+            value={userData.name}
+            onChange={handleChange}
+            placeholder="Your name"
+            className="mt-2 block w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3.5 text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-stone-500 dark:focus:border-orange-400 dark:focus:ring-orange-500/10"
+          />
         </div>
 
-        {/* Right - Signup Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="md:w-2/3 p-12 flex flex-col gap-6 bg-white dark:bg-gray-800"
-        >
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              required
-              value={userData.name}
-              onChange={handleChange}
-              placeholder="Your Name"
-              className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              required
-              value={userData.email}
-              onChange={handleChange}
-              placeholder="you@example.com"
-              className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              required
-              value={userData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              className="mt-2 block w-full rounded-xl bg-gray-100 dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            />
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full mt-4 rounded-2xl bg-black dark:bg-gray-900 text-white font-semibold py-3 shadow-lg hover:opacity-90 transition duration-300"
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-semibold text-stone-700 dark:text-stone-200"
           >
-            Sign Up
-          </button>
+            Email address
+          </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            required
+            value={userData.email}
+            onChange={handleChange}
+            placeholder="you@example.com"
+            className="mt-2 block w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3.5 text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-stone-500 dark:focus:border-orange-400 dark:focus:ring-orange-500/10"
+          />
+        </div>
 
-          {/* Footer */}
-          <p className="mt-6 text-center text-gray-600 dark:text-gray-300 text-sm">
-            Already have an account?{" "}
-            <NavLink to="/home/login" className="font-semibold text-red-500 hover:text-red-400">
-              Sign in
-            </NavLink>
-          </p>
-        </form>
-      </div>
-    </div>
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-semibold text-stone-700 dark:text-stone-200"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            required
+            value={userData.password}
+            onChange={handleChange}
+            placeholder="Create a password"
+            className="mt-2 block w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3.5 text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-stone-500 dark:focus:border-orange-400 dark:focus:ring-orange-500/10"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-white dark:text-stone-950 dark:hover:bg-stone-200"
+        >
+          {submitting ? (
+            <>
+              <LoaderCircle className="h-5 w-5 animate-spin" />
+              Creating account
+            </>
+          ) : (
+            <>
+              Sign up
+              <ArrowRight className="h-4 w-4" />
+            </>
+          )}
+        </button>
+      </form>
+    </AuthLayout>
   );
 }
 
 export default Signup;
-

@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import HeatMap from "@uiw/react-heat-map";
 import { useNavigate } from "react-router-dom";
-import { Context } from "../../context/Context";
+import { Context } from "../../context/context.js";
 import { useEffect, useState, useContext } from "react";
 import { Calendar, Trophy, CheckCircle2 } from "lucide-react";
 import {
@@ -16,19 +16,18 @@ import {
   Bar,
 } from "recharts";
 
+const isSameDay = (d1, d2) =>
+  d1.getFullYear() === d2.getFullYear() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getDate() === d2.getDate();
+
 function Dashboard() {
   const { user, setUser, setIsLoggedIn } = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
   const navigate = useNavigate();
 
-  // url from .env
-  const apiUrl = import.meta.env.VITE_API_URL
-
-  const isSameDay = (d1, d2) =>
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchUserAndHabits = async () => {
@@ -77,42 +76,7 @@ function Dashboard() {
       }
     };
     fetchUserAndHabits();
-  }, []);
-
-  const toggleHabit = async (id) => {
-    try {
-      const res = await fetch(`${apiUrl}/home/habits/${id}/toggle`, {
-        method: "PATCH",
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        const today = new Date();
-        setHabits((prev) =>
-          prev.map((habit) => {
-            if (habit._id === id) {
-              const updatedHabit = data.data;
-              const lastEntry =
-                updatedHabit.history?.[updatedHabit.history.length - 1];
-              const isCompletedToday =
-                lastEntry && isSameDay(new Date(lastEntry.date), today)
-                  ? lastEntry.completed
-                  : false;
-              return { ...updatedHabit, isCompletedToday };
-            }
-            return habit;
-          })
-        );
-        toast.success("Habit updated!");
-      } else {
-        toast.error(data.error || "Failed to update habit");
-      }
-    } catch (err) {
-      console.error("Toggle error:", err);
-      toast.error("Server error");
-    }
-  };
+  }, [apiUrl, navigate, setIsLoggedIn, setUser]);
 
   if (loading) {
     return (
@@ -324,4 +288,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

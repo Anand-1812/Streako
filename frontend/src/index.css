@@ -1,24 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-display: "Audiowide", sans-serif;
+  --font-sans: "Manrope", sans-serif;
+  --font-display: "Sora", sans-serif;
+  --color-brand-50: #fff7ef;
+  --color-brand-100: #ffe9d6;
+  --color-brand-200: #ffd1ad;
+  --color-brand-300: #ffae77;
+  --color-brand-400: #ff8648;
+  --color-brand-500: #f45d22;
+  --color-brand-600: #cf4311;
+  --color-ink-950: #17110b;
 }
 
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-8px);
-  }
+:root {
+  color-scheme: light;
 }
 
-.animate-float {
-  animation: float 1s ease-in-out infinite;
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: #221912;
+  background:
+    radial-gradient(circle at top right, rgba(255, 187, 133, 0.22), transparent 24%),
+    linear-gradient(180deg, #fffaf5 0%, #fff4e8 55%, #fff8f2 100%);
+}
+
+.dark body {
+  color: #f5efe8;
+  background:
+    radial-gradient(circle at top right, rgba(244, 93, 34, 0.14), transparent 22%),
+    linear-gradient(180deg, #120d09 0%, #19120d 55%, #120d09 100%);
+}
+
+::selection {
+  background: rgba(244, 93, 34, 0.22);
+  color: inherit;
+}
+
+#root {
+  min-height: 100vh;
 }

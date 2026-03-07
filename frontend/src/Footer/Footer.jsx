@@ -1,32 +1,48 @@
-import { FaGithub, FaTwitter } from "react-icons/fa";
+import { Github, ArrowUpRight } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 function Footer() {
-  return (
-    <footer className="w-full dark:bg-gray-900/100 bg-white/90  backdrop-blur-md shadow-inner transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
-        {/* Left: Copyright */}
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
-          &#169; 2025 Sreako
-        </p>
+  const year = new Date().getFullYear();
 
-        {/* Center: Social Icons */}
-        <div className="flex items-center gap-4">
+  return (
+    <footer className="mt-20 w-full border-t border-stone-200/70 bg-white/40 transition-all duration-300 dark:border-white/10 dark:bg-stone-950/30">
+      <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 py-8 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="font-display text-2xl font-semibold text-stone-950 dark:text-white">
+            Streako
+          </p>
+          <p className="mt-2 text-sm text-stone-600 dark:text-stone-300">
+            © {year} Streako. Designed to keep habit tracking readable and consistent.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-5 text-sm font-semibold text-stone-600 dark:text-stone-300">
+          <NavLink to="/home" className="transition hover:text-stone-950 dark:hover:text-white">
+            Home
+          </NavLink>
+          <NavLink to="/about" className="transition hover:text-stone-950 dark:hover:text-white">
+            About
+          </NavLink>
+          <NavLink
+            to="/home/signup"
+            className="transition hover:text-stone-950 dark:hover:text-white"
+          >
+            Get started
+          </NavLink>
           <a
             href="https://github.com/anand-1812"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300
-              hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white
-              transition-all duration-300 transform hover:-translate-y-1 hover:scale-110 shadow-sm"
+            className="inline-flex items-center gap-1.5 transition hover:text-stone-950 dark:hover:text-white"
           >
-            <FaGithub className="w-5 h-5" />
+            <Github className="h-4 w-4" />
+            GitHub
+            <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
-
       </div>
     </footer>
   );
 }
 
 export default Footer;
-

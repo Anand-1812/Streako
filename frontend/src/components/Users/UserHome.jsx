@@ -1,17 +1,18 @@
 import toast from "react-hot-toast";
-import { Context } from "../../context/Context";
+import { Context } from "../../context/context.js";
 import { useContext, useEffect, useState } from "react";
 import { Loader2, PlusCircle, CheckCircle, Trash } from "lucide-react";
 
-function UserHome() {
+const isSameDay = (d1, d2) =>
+  d1.getFullYear() === d2.getFullYear() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getDate() === d2.getDate();
 
-  // url from .env
+function UserHome() {
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  // global context
   const { user, setUser, isLoggedIn, setIsLoggedIn, loading: contextLoading } = useContext(Context);
 
-  // necessary states
   const [loading, setLoading] = useState(true);
   const [habits, setHabits] = useState([]);
   const [title, setTitle] = useState("");
@@ -19,40 +20,33 @@ function UserHome() {
   const [adding, setAdding] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const isSameDay = (d1, d2) =>
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
-
-  // fetch user habits
-  const fetchHabits = async () => {
-    try {
-      const res = await fetch(`${apiUrl}/home/habits`, {
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        const today = new Date();
-        const enriched = (data.data || []).map((habit) => {
-          const lastEntry = habit.history?.[habit.history.length - 1];
-          const isCompletedToday =
-            lastEntry && isSameDay(new Date(lastEntry.date), today)
-              ? lastEntry.completed
-              : false;
-          return { ...habit, isCompletedToday };
-        });
-        setHabits(enriched);
-      } else {
-        toast.error(data.error || "Failed to fetch habits");
-      }
-    } catch (err) {
-      console.error("Fetch habits error:", err);
-      toast.error("Server error");
-    }
-  };
-
-  // for persistent login
   useEffect(() => {
+    const fetchHabits = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/home/habits`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const today = new Date();
+          const enriched = (data.data || []).map((habit) => {
+            const lastEntry = habit.history?.[habit.history.length - 1];
+            const isCompletedToday =
+              lastEntry && isSameDay(new Date(lastEntry.date), today)
+                ? lastEntry.completed
+                : false;
+            return { ...habit, isCompletedToday };
+          });
+          setHabits(enriched);
+        } else {
+          toast.error(data.error || "Failed to fetch habits");
+        }
+      } catch (err) {
+        console.error("Fetch habits error:", err);
+        toast.error("Server error");
+      }
+    };
+
     const verifyUser = async () => {
       try {
         const res = await fetch(`${apiUrl}/home/verify`, {
@@ -77,9 +71,8 @@ function UserHome() {
     };
 
     verifyUser();
-  }, []);
+  }, [apiUrl, setIsLoggedIn, setUser]);
 
-  // add user habit
   const addHabit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error("Habit title is required");
@@ -140,7 +133,6 @@ function UserHome() {
     }
   };
 
-  // loading screen || access denied
   if (loading || contextLoading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -167,7 +159,6 @@ function UserHome() {
 
   const isNewUser = habits.length === 0;
 
-  // user habit page starts here
   return (
     <div className="min-h-[calc(100vh-64px)] pt-24 pb-12 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6">
@@ -315,4 +306,3 @@ function UserHome() {
 }
 
 export default UserHome;
-

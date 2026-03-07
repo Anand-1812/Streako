@@ -1,7 +1,6 @@
 import toast from "react-hot-toast";
-import { createContext, useState, useEffect } from "react";
-
-export const Context = createContext();
+import { useState, useEffect } from "react";
+import { Context } from "./context.js";
 
 const ContextProvider = ({ children }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -22,12 +21,9 @@ const ContextProvider = ({ children }) => {
         if (res.ok) {
           setUser(data.user);
           setIsLoggedIn(true);
-          // optional toast (you can remove this to avoid repeated popups)
-          console.log("✅ User verified successfully:", data.user);
         } else {
           setUser(null);
           setIsLoggedIn(false);
-          toast.error("Login verification failed");
         }
       } catch (err) {
         console.error("Persistent login verify error:", err);
@@ -80,4 +76,3 @@ const ContextProvider = ({ children }) => {
 };
 
 export default ContextProvider;
-
